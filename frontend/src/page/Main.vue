@@ -4,10 +4,13 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { RestApi } from '../util/RestApi';
 
 export default defineComponent({
   components: {},
-  async mounted() {},
+  async mounted() {
+    console.log(await RestApi.food.getList());
+  },
   methods: {},
   data: () => {
     return {};
