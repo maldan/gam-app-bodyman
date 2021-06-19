@@ -2,9 +2,11 @@ package caloryman
 
 import "time"
 
-type FoodComponent struct {
-	Name  string `json:"name"`
-	Value string `json:"value"`
+type Component struct {
+	Id          string `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
 }
 
 type Food struct {
@@ -15,9 +17,7 @@ type Food struct {
 	Protein      string `json:"protein"`
 	Carbohydrate string `json:"carbohydrate"`
 
-	MineralList []FoodComponent `json:"mineralList"`
-	VitaminList []FoodComponent `json:"vitaminList"`
-	OtherList   []FoodComponent `json:"otherList"`
+	ComponentIdList []string `json:"componentIdList"`
 }
 
 type Eat struct {
@@ -25,4 +25,8 @@ type Eat struct {
 	ProductId string    `json:"name"`
 	Amount    string    `json:"amount"`
 	Created   time.Time `json:"created"`
+}
+
+type IdArgs struct {
+	Id string
 }

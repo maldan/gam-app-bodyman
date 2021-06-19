@@ -34,8 +34,9 @@ func Start(frontFs embed.FS) {
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"food": new(FoodApi),
-			"eat":  new(EatApi),
+			"food":      new(FoodApi),
+			"eat":       new(EatApi),
+			"component": new(ComponentApi),
 		},
 	})
 }
