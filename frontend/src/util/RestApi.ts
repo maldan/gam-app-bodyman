@@ -55,4 +55,30 @@ export const RestApi = {
       return (await Axios.get(`${API_URL}/component?id=${id}`)).data.response;
     },
   },
+  note: {
+    async getList() {
+      return (await Axios.get(`${API_URL}/note/list`)).data.response;
+    },
+    async get(id: string) {
+      return (await Axios.get(`${API_URL}/note?id=${id}`)).data.response;
+    },
+    async update(id: string, description: string) {
+      return (
+        await Axios.patch(`${API_URL}/note`, {
+          id,
+          description,
+        })
+      ).data.response;
+    },
+    async add(description: string) {
+      return (
+        await Axios.post(`${API_URL}/note`, {
+          description,
+        })
+      ).data.response;
+    },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/note?id=${id}`)).data.response;
+    },
+  },
 };

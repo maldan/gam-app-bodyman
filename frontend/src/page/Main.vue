@@ -55,27 +55,50 @@
         </div>
       </div>
 
-      <!-- X -->
+      <!-- Third -->
       <div style="flex: 1">
+        <!-- Schedule -->
         <div class="block" style="margin-bottom: 15px">
           <div class="header">Schedule</div>
           <div class="body">
             <Schedule @select="(currentDate = $event), refresh()" />
           </div>
         </div>
-        <div class="block">
-          <div class="header">Notes</div>
-          <div class="body">1234</div>
+
+        <!-- Notes -->
+        <div class="block" style="height: calc(100% - 420px)">
+          <div class="header">
+            Notes
+            <img
+              @click="isShowAddNoteForm = true"
+              class="clickable"
+              src="../asset/add.svg"
+              alt=""
+            />
+          </div>
+          <div class="body" style="height: calc(100% - 22px - 15px)">
+            <NoteList ref="note_list" @edit="(isShowEditNoteForm = true), (noteId = $event)" />
+          </div>
         </div>
       </div>
     </div>
 
+    <AddNote
+      :date="currentDate"
+      v-if="isShowAddNoteForm"
+      @close="(isShowAddNoteForm = false), refresh()"
+    />
     <AddEat
       :date="currentDate"
       v-if="isShowAddEatForm"
       @close="(isShowAddEatForm = false), refresh()"
     />
     <EditEat :id="eatId" v-if="isShowEditEatForm" @close="(isShowEditEatForm = false), refresh()" />
+    <EditNote
+      :id="noteId"
+      v-if="isShowEditNoteForm"
+      @close="(isShowEditNoteForm = false), refresh()"
+    />
   </div>
 </template>
 
@@ -83,13 +106,16 @@
 import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
 import Eat from '../component/Eat.vue';
+import AddNote from '../component/AddNote.vue';
 import AddEat from '../component/AddEat.vue';
 import EditEat from '../component/EditEat.vue';
+import EditNote from '../component/EditNote.vue';
 import Schedule from '../component/Schedule.vue';
+import NoteList from '../component/NoteList.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Eat, AddEat, Schedule, EditEat },
+  components: { Eat, AddEat, Schedule, EditEat, NoteList, AddNote, EditNote },
   async mounted() {
     this.refresh();
   },
@@ -99,13 +125,17 @@ export default defineComponent({
       this.stat = await RestApi.eat.getTotalStatByDate(
         Moment(this.currentDate).format('YYYY-MM-DD'),
       );
+      (this.$refs['note_list'] as any).refresh();
     },
   },
   data: () => {
     return {
       eatId: '',
+      noteId: '',
       isShowAddEatForm: false,
       isShowEditEatForm: false,
+      isShowAddNoteForm: false,
+      isShowEditNoteForm: false,
       eat: [],
       stat: {},
       currentDate: new Date(),
