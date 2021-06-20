@@ -1,0 +1,115 @@
+<template>
+  <div :class="$style.block">
+    <div :class="$style.header">
+      <div :class="$style.left">
+        {{ ~~item.calory }} kkal <span>({{ item.amount }})</span>
+      </div>
+      <div :class="$style.right">{{ $root.moment(item.created).format('HH:mm') }}</div>
+    </div>
+    <div :class="$style.body">
+      <div :class="$style.name">
+        {{ item.product.name }}
+        <img
+          @click="$emit('edit', item.id)"
+          class="clickable"
+          src="../asset/pencil.svg"
+          alt=""
+          style="margin-left: auto"
+        />
+        <img @click="$emit('delete', item.id)" class="clickable" src="../asset/trash.svg" alt="" />
+      </div>
+      <div :class="$style.component">
+        <div><span>P</span> {{ item.product.protein }}</div>
+        <div><span>C</span> {{ item.product.carbohydrate }}</div>
+        <div><span>F</span> {{ item.product.fat }}</div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+export default defineComponent({
+  props: {
+    item: Object,
+  },
+  components: {},
+  async mounted() {},
+  methods: {},
+  data: () => {
+    return {};
+  },
+});
+</script>
+
+<style lang="scss" module>
+.block {
+  font-size: 15px;
+
+  .header {
+    display: flex;
+
+    .left,
+    .right {
+      padding: 5px 10px;
+      background: #383838;
+      border-radius: 6px 6px 0 0;
+      color: #b1b1b1;
+      background: #2c2c2c;
+      font-weight: bold;
+
+      span {
+        color: #bdbdbd;
+        font-style: italic;
+        font-weight: 300;
+      }
+    }
+
+    .left {
+      color: #7be01e;
+    }
+
+    .right {
+      margin-left: auto;
+    }
+  }
+
+  .body {
+    padding: 10px 15px;
+    background: #383838;
+    border-radius: 0 0 6px 6px;
+    color: #b1b1b1;
+
+    .name {
+      display: flex;
+      color: #ffe10c;
+
+      img {
+        margin-left: 15px;
+      }
+    }
+
+    .component {
+      margin-top: 10px;
+      display: grid;
+      align-items: center;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 5px;
+      font-size: 14px;
+
+      > div {
+        display: flex;
+
+        span {
+          color: #828282;
+          margin-right: auto;
+        }
+        flex: 1;
+        background: #292929;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
+</style>
