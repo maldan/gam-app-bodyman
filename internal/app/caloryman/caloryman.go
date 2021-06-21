@@ -17,8 +17,8 @@ func Start(frontFs embed.FS) {
 	var host = flag.String("host", "127.0.0.1", "Server Hostname")
 	var port = flag.Int("port", 16000, "Server Port")
 	var gui = flag.Bool("gui", false, "Use Gui")
-	var width = flag.Int("width", 1280, "Window Width")
-	var height = flag.Int("height", 720, "Window Height")
+	var width = flag.Int("width", 1100, "Window Width")
+	var height = flag.Int("height", 900, "Window Height")
 	DataDir = *flag.String("data-dir", "db", "Data Directory")
 	flag.Parse()
 

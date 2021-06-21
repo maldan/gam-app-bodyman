@@ -23,12 +23,12 @@ export default defineComponent({
   },
   components: { Button, TextArea },
   async mounted() {
-    const note = await RestApi.note.get(this.id);
+    const note = await RestApi.note.get(this.id + '');
     this.description = note.description;
   },
   methods: {
     async submit() {
-      await RestApi.note.update(this.id, this.description);
+      await RestApi.note.update(this.id + '', this.description);
       this.$emit('close');
     },
   },
