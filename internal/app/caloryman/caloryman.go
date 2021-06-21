@@ -19,8 +19,9 @@ func Start(frontFs embed.FS) {
 	var gui = flag.Bool("gui", false, "Use Gui")
 	var width = flag.Int("width", 1100, "Window Width")
 	var height = flag.Int("height", 900, "Window Height")
-	DataDir = *flag.String("data-dir", "db", "Data Directory")
+	var dataDir = flag.String("data-dir", "db", "Data Directory")
 	flag.Parse()
+	DataDir = *dataDir
 
 	if *gui {
 		go (func() {
