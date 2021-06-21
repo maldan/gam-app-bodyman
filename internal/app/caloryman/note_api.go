@@ -34,7 +34,7 @@ func (f NoteApi) GetIndex(args IdArgs) (Note, int) {
 // Get list of all notes
 func (f NoteApi) GetList() []Note {
 	var noteList []Note
-	docdb.Get("db", "note", &noteList)
+	docdb.Get(DataDir, "note", &noteList)
 	sort.SliceStable(noteList, func(i, j int) bool {
 		return noteList[i].Created.Unix() > noteList[j].Created.Unix()
 	})
@@ -49,7 +49,7 @@ func (f NoteApi) PostIndex(args NoteApi_PostIndexArgs) {
 		Description: args.Description,
 		Created:     time.Now(),
 	})
-	docdb.Save("db", "note", &noteList)
+	docdb.Save(DataDir, "note", &noteList)
 }
 
 // Update note
@@ -58,7 +58,7 @@ func (f NoteApi) PatchIndex(args NoteApi_PostIndexArgs) {
 	noteList := f.GetList()
 	note.Description = args.Description
 	noteList[noteIndex] = note
-	docdb.Save("db", "note", &noteList)
+	docdb.Save(DataDir, "note", &noteList)
 }
 
 func (f NoteApi) DeleteIndex(args DeleteIndexArgs) {
@@ -66,5 +66,5 @@ func (f NoteApi) DeleteIndex(args DeleteIndexArgs) {
 	out := cmhp.SliceFilterR(noteList, func(i interface{}) bool {
 		return i.(Note).Id != args.Id
 	})
-	docdb.Save("db", "note", &out)
+	docdb.Save(DataDir, "note", &out)
 }

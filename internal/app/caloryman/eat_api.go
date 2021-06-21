@@ -21,7 +21,7 @@ type EatApi_PostIndexArgs struct {
 
 func (f EatApi) GetIndex(args IdArgs) Eat {
 	var eat []Eat
-	docdb.Get("db", "eat", &eat)
+	docdb.Get(DataDir, "eat", &eat)
 	item, itemId := cmhp.SliceFindR(eat, func(i interface{}) bool {
 		return i.(Eat).Id == args.Id
 	})
@@ -40,7 +40,7 @@ func (f EatApi) GetIndex(args IdArgs) Eat {
 
 func (f EatApi) GetList() []Eat {
 	var eat []Eat
-	docdb.Get("db", "eat", &eat)
+	docdb.Get(DataDir, "eat", &eat)
 	return eat
 }
 
@@ -93,19 +93,19 @@ func (f EatApi) GetTotalStatByDate(args DateArgs) map[string]float64 {
 
 func (f EatApi) PostIndex(args EatApi_PostIndexArgs) {
 	var eat []Eat
-	docdb.Get("db", "eat", &eat)
+	docdb.Get(DataDir, "eat", &eat)
 	eat = append(eat, Eat{
 		Id:        xid.New().String(),
 		ProductId: args.ProductId,
 		Amount:    args.Amount,
 		Created:   args.Created,
 	})
-	docdb.Save("db", "eat", &eat)
+	docdb.Save(DataDir, "eat", &eat)
 }
 
 func (f EatApi) PatchIndex(args EatApi_PostIndexArgs) {
 	var eat []Eat
-	docdb.Get("db", "eat", &eat)
+	docdb.Get(DataDir, "eat", &eat)
 	item, itemId := cmhp.SliceFindR(eat, func(i interface{}) bool {
 		return i.(Eat).Id == args.Id
 	})
@@ -119,14 +119,14 @@ func (f EatApi) PatchIndex(args EatApi_PostIndexArgs) {
 	eatItem.Created = args.Created
 	eat[itemId] = eatItem
 
-	docdb.Save("db", "eat", &eat)
+	docdb.Save(DataDir, "eat", &eat)
 }
 
 func (f EatApi) DeleteIndex(args DeleteIndexArgs) {
 	var eat []Eat
-	docdb.Get("db", "eat", &eat)
+	docdb.Get(DataDir, "eat", &eat)
 	out := cmhp.SliceFilterR(eat, func(i interface{}) bool {
 		return i.(Eat).Id != args.Id
 	})
-	docdb.Save("db", "eat", &out)
+	docdb.Save(DataDir, "eat", &out)
 }
