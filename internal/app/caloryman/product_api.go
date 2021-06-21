@@ -25,7 +25,7 @@ type DeleteIndexArgs struct {
 
 func (f ProductApi) GetIndex(args IdArgs) Product {
 	var product []Product
-	docdb.Get("db", "product", &product)
+	docdb.Get(DataDir, "product", &product)
 	item, itemId := cmhp.SliceFindR(product, func(i interface{}) bool {
 		return i.(Product).Id == args.Id
 	})
@@ -37,7 +37,7 @@ func (f ProductApi) GetIndex(args IdArgs) Product {
 
 func (f ProductApi) GetList() []Product {
 	var product []Product
-	docdb.Get("db", "product", &product)
+	docdb.Get(DataDir, "product", &product)
 	return product
 }
 
@@ -62,12 +62,12 @@ func (f ProductApi) PostIndex(args ProductApi_PostIndexArgs) {
 		Carbohydrate:    args.Carbohydrate,
 		ComponentIdList: make([]string, 0),
 	})
-	docdb.Save("db", "product", &productList)
+	docdb.Save(DataDir, "product", &productList)
 }
 
 func (f ProductApi) PatchIndex(args ProductApi_PostIndexArgs) {
 	var product []Product
-	docdb.Get("db", "product", &product)
+	docdb.Get(DataDir, "product", &product)
 	item, itemId := cmhp.SliceFindR(product, func(i interface{}) bool {
 		return i.(Product).Id == args.Id
 	})
@@ -79,7 +79,7 @@ func (f ProductApi) PatchIndex(args ProductApi_PostIndexArgs) {
 	productItem.Name = args.Name
 	product[itemId] = productItem
 
-	docdb.Save("db", "product", &product)
+	docdb.Save(DataDir, "product", &product)
 }
 
 func (f ProductApi) DeleteIndex(args DeleteIndexArgs) {
@@ -87,5 +87,5 @@ func (f ProductApi) DeleteIndex(args DeleteIndexArgs) {
 	out := cmhp.SliceFilterR(productList, func(i interface{}) bool {
 		return i.(Product).Id != args.Id
 	})
-	docdb.Save("db", "product", &out)
+	docdb.Save(DataDir, "product", &out)
 }

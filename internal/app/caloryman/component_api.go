@@ -18,7 +18,7 @@ type ComponentApi_PostIndexArgs struct {
 
 func (f ComponentApi) GetIndex(args IdArgs) Component {
 	var component []Component
-	docdb.Get("db", "component", &component)
+	docdb.Get(DataDir, "component", &component)
 	item, itemId := cmhp.SliceFindR(component, func(i interface{}) bool {
 		return i.(Component).Id == args.Id
 	})
@@ -30,25 +30,25 @@ func (f ComponentApi) GetIndex(args IdArgs) Component {
 
 func (f ComponentApi) GetList() []Component {
 	var component []Component
-	docdb.Get("db", "component", &component)
+	docdb.Get(DataDir, "component", &component)
 	return component
 }
 
 func (f ComponentApi) PostIndex(args ComponentApi_PostIndexArgs) {
 	var component []Component
-	docdb.Get("db", "component", &component)
+	docdb.Get(DataDir, "component", &component)
 	component = append(component, Component{
 		Id:          xid.New().String(),
 		Name:        args.Name,
 		Type:        args.Type,
 		Description: args.Description,
 	})
-	docdb.Save("db", "component", &component)
+	docdb.Save(DataDir, "component", &component)
 }
 
 func (f ComponentApi) PatchIndex(args ComponentApi_PostIndexArgs) {
 	var component []Component
-	docdb.Get("db", "component", &component)
+	docdb.Get(DataDir, "component", &component)
 	item, itemId := cmhp.SliceFindR(component, func(i interface{}) bool {
 		return i.(Component).Id == args.Id
 	})
@@ -62,14 +62,14 @@ func (f ComponentApi) PatchIndex(args ComponentApi_PostIndexArgs) {
 	componentItem.Description = args.Description
 	component[itemId] = componentItem
 
-	docdb.Save("db", "component", &component)
+	docdb.Save(DataDir, "component", &component)
 }
 
 func (f ComponentApi) DeleteIndex(args DeleteIndexArgs) {
 	var component []Component
-	docdb.Get("db", "component", &component)
+	docdb.Get(DataDir, "component", &component)
 	out := cmhp.SliceFilterR(component, func(i interface{}) bool {
 		return i.(Component).Id != args.Id
 	})
-	docdb.Save("db", "component", &out)
+	docdb.Save(DataDir, "component", &out)
 }
