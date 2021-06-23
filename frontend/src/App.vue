@@ -12,7 +12,7 @@ export default defineComponent({
   methods: {},
   data: () => {
     return {
-      moment: Moment, //
+      moment: Moment,
     };
   },
 });

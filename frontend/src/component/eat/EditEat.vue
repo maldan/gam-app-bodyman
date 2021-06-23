@@ -1,32 +1,24 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.window">
-      <div v-for="form in foodForm" :key="form">
-        <div :class="$style.found_item" v-if="form.id">
-          {{ form.name }}
-          <img @click="form.id = ''" class="clickable" src="../asset/add.svg" />
-        </div>
-        <Input
-          v-if="!form.id"
-          icon="add"
-          placeholder="Product..."
-          style="margin-bottom: 10px"
-          v-model="form.name"
-          @change="searchProduct(form)"
-        />
-        <Input
-          icon="add"
-          placeholder="Amount..."
-          style="margin-bottom: 10px"
-          v-model="form.amount"
-        />
+      <div :class="$style.found_item" v-if="productId">
+        {{ productName }}
+        <img @click="productId = ''" class="clickable" src="../../asset/remove.svg" />
       </div>
-
-      <Input icon="add" placeholder="Date..." style="margin-bottom: 10px" v-model="created" />
+      <Input
+        v-if="!productId"
+        icon="food"
+        placeholder="Product..."
+        style="margin-bottom: 10px"
+        v-model="productName"
+        @change="searchProduct(form)"
+      />
+      <Input icon="weight" placeholder="Amount..." style="margin-bottom: 10px" v-model="amount" />
+      <Input icon="date" placeholder="Date..." style="margin-bottom: 10px" v-model="created" />
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
-        <Button @click="submit()" text="Add" icon="add" style="margin-left: 5px" />
+        <Button @click="submit()" text="Save" icon="pencil" style="margin-left: 5px" />
       </div>
     </div>
   </div>
@@ -34,42 +26,42 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { RestApi } from '../util/RestApi';
-import Button from './Button.vue';
-import Input from './Input.vue';
-import Select from './Select.vue';
+import { RestApi } from '../../util/RestApi';
+import Button from '../Button.vue';
+import Input from '../Input.vue';
+import Select from '../Select.vue';
+import Moment from 'moment';
 
 export default defineComponent({
   props: {
-    date: Object,
+    id: String,
   },
   components: { Button, Input, Select },
   async mounted() {
-    for (let i = 0; i < 4; i++) {
-      this.foodForm.push({
-        id: '',
-        name: '',
-        amount: '',
-      });
-    }
     this.productList = (await RestApi.product.getList()).map((x: any) => {
       return {
         label: x.name,
         value: x.id,
       };
     });
+
+    const eat = await RestApi.eat.get(this.id + '');
+    this.productName = eat.product.name;
+    this.productId = eat.productId;
+    this.amount = eat.amount;
+    this.created = Moment(eat.created).format('YYYY-MM-DD HH:mm:ss');
   },
   methods: {
     async searchProduct(form: any) {
       try {
         const product = await RestApi.product.findByName(form.name);
-        form.id = product.id;
-        form.name = product.name;
+        this.productId = product.id;
+        this.productName = product.name;
       } catch {
         try {
           const product = await RestApi.product.findByName(this.defuck(form.name));
-          form.id = product.id;
-          form.name = product.name;
+          this.productId = product.id;
+          this.productName = product.name;
         } catch {}
       }
     },
@@ -88,12 +80,7 @@ export default defineComponent({
       return out.join('');
     },
     async submit() {
-      for (let i = 0; i < this.foodForm.length; i++) {
-        if (!this.foodForm[i].id) {
-          continue;
-        }
-        await RestApi.eat.add(this.foodForm[i].id, this.foodForm[i].amount, this.created);
-      }
+      await RestApi.eat.update(this.id + '', this.productId, this.amount, this.created);
       this.$emit('close');
     },
   },
@@ -102,8 +89,10 @@ export default defineComponent({
 
     return {
       productList: [],
-      created: moment(this.date).format('YYYY-MM-DD HH:mm:ss'),
-      foodForm: [] as any[],
+      productId: '',
+      productName: '',
+      amount: '',
+      created: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
     };
   },
 });

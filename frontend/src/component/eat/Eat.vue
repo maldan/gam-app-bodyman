@@ -12,11 +12,16 @@
         <img
           @click="$emit('edit', item.id)"
           class="clickable"
-          src="../asset/pencil.svg"
+          src="../../asset/pencil.svg"
           alt=""
           style="margin-left: auto"
         />
-        <img @click="$emit('delete', item.id)" class="clickable" src="../asset/trash.svg" alt="" />
+        <img
+          @click="$emit('delete', item.id)"
+          class="clickable"
+          src="../../asset/trash.svg"
+          alt=""
+        />
       </div>
       <div :class="$style.component">
         <div><span>P</span> {{ item.product.protein }}</div>
@@ -24,19 +29,35 @@
         <div><span>F</span> {{ item.product.fat }}</div>
       </div>
     </div>
+    <div :class="$style.gap" v-if="gap()">{{ gap() }}</div>
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import Moment from 'moment';
 
 export default defineComponent({
   props: {
     item: Object,
+    nextItem: Object,
   },
   components: {},
   async mounted() {},
-  methods: {},
+  methods: {
+    gap() {
+      if (!this.nextItem || !this.item) {
+        return null;
+      }
+
+      const a = new Date(this.item.created).getTime() / 1000;
+      const b = new Date(this.nextItem.created).getTime() / 1000;
+      if (b - a < 60 * 5) {
+        return null;
+      }
+      return Moment.utc(Moment.duration(b - a, 'seconds').asMilliseconds()).format('HH:mm');
+    },
+  },
   data: () => {
     return {};
   },
@@ -53,7 +74,6 @@ export default defineComponent({
     .left,
     .right {
       padding: 5px 10px;
-      background: #383838;
       border-radius: 6px 6px 0 0;
       color: #b1b1b1;
       background: #2c2c2c;
@@ -109,6 +129,36 @@ export default defineComponent({
         background: #292929;
         padding: 5px 10px;
       }
+    }
+  }
+
+  .gap {
+    background: #2c2c2c;
+    padding: 3px 10px;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: 25px;
+    margin-bottom: 25px;
+    color: #7be01e;
+    position: relative;
+    width: max-content;
+    margin-left: auto;
+    margin-right: auto;
+
+    &::before {
+      content: '|';
+      position: absolute;
+      left: 50%;
+      top: -22px;
+      color: #828282;
+    }
+
+    &::after {
+      content: '|';
+      position: absolute;
+      left: 50%;
+      bottom: -20px;
+      color: #828282;
     }
   }
 }

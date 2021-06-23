@@ -13,8 +13,35 @@ export const RestApi = {
     async findByName(name: string) {
       return (await Axios.get(`${API_URL}/product/byName?name=${name}`)).data.response;
     },
+    async add(name: string, protein: string, carbohydrate: string, fat: string) {
+      return (
+        await Axios.post(`${API_URL}/product`, {
+          name,
+          protein,
+          carbohydrate,
+          fat,
+        })
+      ).data.response;
+    },
+    async update(id: string, name: string, protein: string, carbohydrate: string, fat: string) {
+      return (
+        await Axios.patch(`${API_URL}/product`, {
+          id,
+          name,
+          protein,
+          carbohydrate,
+          fat,
+        })
+      ).data.response;
+    },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/product?id=${id}`)).data.response;
+    },
   },
   eat: {
+    async getYearMap(date: string) {
+      return (await Axios.get(`${API_URL}/eat/yearMap?date=${date}`)).data.response;
+    },
     async getTotalStatByDate(date: string) {
       return (await Axios.get(`${API_URL}/eat/totalStatByDate?date=${date}`)).data.response;
     },
@@ -48,11 +75,31 @@ export const RestApi = {
     },
   },
   component: {
+    async add(name: string, type: string) {
+      return (
+        await Axios.post(`${API_URL}/component`, {
+          name,
+          type,
+        })
+      ).data.response;
+    },
     async getList() {
       return (await Axios.get(`${API_URL}/component/list`)).data.response;
     },
     async get(id: string) {
       return (await Axios.get(`${API_URL}/component?id=${id}`)).data.response;
+    },
+    async update(id: string, name: string, type: string) {
+      return (
+        await Axios.patch(`${API_URL}/component`, {
+          id,
+          name,
+          type,
+        })
+      ).data.response;
+    },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/component?id=${id}`)).data.response;
     },
   },
   note: {

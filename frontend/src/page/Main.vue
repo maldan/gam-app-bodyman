@@ -1,8 +1,10 @@
 <template>
   <div class="main">
-    <div style="display: flex; height: 100%">
+    <Header />
+
+    <div style="display: flex; height: calc(100% - 60px); margin-top: 10px">
       <!-- Eat History -->
-      <div class="block" style="margin-right: 15px; width: 320px; height: 100%">
+      <div class="block" style="margin-right: 10px; width: 320px; height: calc(100% - 10px)">
         <!-- Header -->
         <div class="header">
           Eat history
@@ -13,17 +15,18 @@
         <div class="body" style="height: calc(100% - 22px - 15px)">
           <Eat
             @edit="(isShowEditEatForm = true), (eatId = $event)"
-            v-for="x in eat"
+            v-for="(x, i) in eat"
             :key="x.id"
             :item="x"
+            :nextItem="eat[i + 1]"
             style="margin-bottom: 15px"
           />
         </div>
       </div>
 
       <!-- Second -->
-      <div style="display: flex; flex-direction: column; width: 260px; margin-right: 15px">
-        <div class="block" style="margin-bottom: 15px">
+      <div style="display: flex; flex-direction: column; width: 260px; margin-right: 10px">
+        <div class="block" style="margin-bottom: 10px">
           <div class="header">Total Eat</div>
           <div class="body">
             <div class="total_item" v-for="(v, k) in stat" :key="k">
@@ -33,7 +36,7 @@
           </div>
         </div>
 
-        <div class="block" style="margin-bottom: 15px">
+        <div class="block" style="margin-bottom: 10px">
           <div class="header">Total Vitamin</div>
           <div class="body component_list">
             <div>A</div>
@@ -58,7 +61,7 @@
       <!-- Third -->
       <div style="flex: 1">
         <!-- Schedule -->
-        <div class="block" style="margin-bottom: 15px">
+        <div class="block" style="margin-bottom: 10px">
           <div class="header">Schedule</div>
           <div class="body">
             <Schedule @select="(currentDate = $event), refresh()" />
@@ -66,7 +69,7 @@
         </div>
 
         <!-- Notes -->
-        <div class="block" style="height: calc(100% - 420px)">
+        <div class="block" style="height: calc(100% - 445px)">
           <div class="header">
             Notes
             <img
@@ -105,17 +108,18 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
-import Eat from '../component/Eat.vue';
+import Eat from '../component/eat/Eat.vue';
 import AddNote from '../component/AddNote.vue';
-import AddEat from '../component/AddEat.vue';
-import EditEat from '../component/EditEat.vue';
+import AddEat from '../component/eat/AddEat.vue';
+import EditEat from '../component/eat/EditEat.vue';
 import EditNote from '../component/EditNote.vue';
 import Schedule from '../component/Schedule.vue';
 import NoteList from '../component/NoteList.vue';
+import Header from '../component/Header.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Eat, AddEat, Schedule, EditEat, NoteList, AddNote, EditNote },
+  components: { Eat, AddEat, Schedule, EditEat, NoteList, AddNote, EditNote, Header },
   async mounted() {
     this.refresh();
   },

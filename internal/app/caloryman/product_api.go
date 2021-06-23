@@ -23,7 +23,7 @@ type DeleteIndexArgs struct {
 	Id string
 }
 
-func (f ProductApi) GetIndex(args IdArgs) Product {
+func (f ProductApi) GetIndex(args IdArgs) (Product, int) {
 	var product []Product
 	docdb.Get(DataDir, "product", &product)
 	item, itemId := cmhp.SliceFindR(product, func(i interface{}) bool {
@@ -32,7 +32,7 @@ func (f ProductApi) GetIndex(args IdArgs) Product {
 	if itemId == -1 {
 		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
 	}
-	return item.(Product)
+	return item.(Product), itemId
 }
 
 func (f ProductApi) GetList() []Product {
@@ -66,20 +66,14 @@ func (f ProductApi) PostIndex(args ProductApi_PostIndexArgs) {
 }
 
 func (f ProductApi) PatchIndex(args ProductApi_PostIndexArgs) {
-	var product []Product
-	docdb.Get(DataDir, "product", &product)
-	item, itemId := cmhp.SliceFindR(product, func(i interface{}) bool {
-		return i.(Product).Id == args.Id
-	})
-
-	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
-	}
-	productItem := item.(Product)
-	productItem.Name = args.Name
-	product[itemId] = productItem
-
-	docdb.Save(DataDir, "product", &product)
+	product, productId := f.GetIndex(IdArgs{Id: args.Id})
+	productList := f.GetList()
+	product.Name = args.Name
+	product.Protein = args.Protein
+	product.Carbohydrate = args.Carbohydrate
+	product.Fat = args.Fat
+	productList[productId] = product
+	docdb.Save(DataDir, "product", &productList)
 }
 
 func (f ProductApi) DeleteIndex(args DeleteIndexArgs) {

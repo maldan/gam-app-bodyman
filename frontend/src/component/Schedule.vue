@@ -22,13 +22,12 @@
               $root.moment(date).format('DD MMM YYYY') === $root.moment(z).format('DD MMM YYYY')
                 ? $style.selected
                 : '',
+              z === null ? $style.null : '',
             ]"
+            :style="{ background: getPower(map[$root.moment(z).format('YYYY-MM-DD')]?.calory) }"
             v-for="z in days[i]"
             :key="z"
           ></div>
-          <!-- <div v-for="y in 4" :key="y">
-            <div :class="$style.cell" v-for="z in 7" :key="z"></div>
-          </div> -->
         </div>
       </div>
     </div>
@@ -38,6 +37,8 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { RestApi } from '../util/RestApi';
+import Moment from 'moment';
 
 export default defineComponent({
   props: {
@@ -46,10 +47,28 @@ export default defineComponent({
   components: {},
   async mounted() {
     for (let i = 0; i < 12; i++) {
-      this.days[i] = this.getDates(i);
+      const l = this.getDates(i);
+      const ll = [];
+      for (let j = 0; j < l[0].getDay() - 1; j++) {
+        ll.push(null);
+      }
+      this.days[i] = [...ll, ...l];
     }
+
+    this.getYearMap();
   },
   methods: {
+    getPower(calory: number) {
+      if (calory === undefined) return 'transparent';
+      if (calory <= 0) return '#2b2b2b';
+      if (calory >= 2500) return '#e8543c66';
+      else if (calory >= 2000) return '#eca54d66';
+      else if (calory >= 1600) return '#fff81487';
+      else return '#50ec4d66';
+    },
+    async getYearMap() {
+      this.map = await RestApi.eat.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
+    },
     getDates(month: number) {
       const cFrom = new Date();
       const cTo = new Date();
@@ -78,6 +97,7 @@ export default defineComponent({
       month: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       days: [] as any[],
       date: new Date(),
+      map: {},
     };
   },
 });
@@ -107,6 +127,11 @@ export default defineComponent({
         align-items: center;
         justify-content: center;
 
+        &.null {
+          pointer-events: none;
+          background: transparent;
+        }
+
         &.selected {
           border: 1px solid #ca6f00;
         }
@@ -116,6 +141,7 @@ export default defineComponent({
           display: flex;
           align-items: center;
           justify-content: center;
+          color: #fefefe;
         }
       }
     }
