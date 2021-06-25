@@ -1,9 +1,9 @@
-github.com/maldan/go-cmhp v0.0.2 h1:rVAX5Ghk1bdb0j1XfwJFgzXyV48FQhPgu0I2H3TS1sU=
-github.com/maldan/go-cmhp v0.0.2/go.mod h1:e4RTNk90LsA2B4dqYQMjw17WJTI4rNa+OnDxxxxc4hI=
+github.com/maldan/go-cmhp v0.0.3 h1:R84rfbDuQ8pA+aYjikHZaVyCOC+y1WOQxBMAxvRnJ5s=
+github.com/maldan/go-cmhp v0.0.3/go.mod h1:e4RTNk90LsA2B4dqYQMjw17WJTI4rNa+OnDxxxxc4hI=
 github.com/maldan/go-docdb v0.0.2 h1:4E/cNEJiZNEW40yB1M7zw7ZCmUFoP0B5wxVy3t8Sxkw=
 github.com/maldan/go-docdb v0.0.2/go.mod h1:szF46WRiuyzjuDuLohSi8wJnZrcyuRoyKPgs6qTVR9s=
-github.com/maldan/go-restserver v1.2.0 h1:2rH2eDjobT6gGYuc2QE2vce6Bve8eN0TFVJ26v0/yYU=
-github.com/maldan/go-restserver v1.2.0/go.mod h1:KG7J81YT14VXwFII4cGXIxzF5ZJAchgfOPd6Zz7uFBM=
+github.com/maldan/go-restserver v1.2.1 h1:k69IcDhDaq9Hp5N3apRY+0JVVNfTsFfBFq/Yh9TAVDQ=
+github.com/maldan/go-restserver v1.2.1/go.mod h1:KG7J81YT14VXwFII4cGXIxzF5ZJAchgfOPd6Zz7uFBM=
 github.com/rs/xid v1.3.0 h1:6NjYksEUlhurdVehpc7S7dk6DAmcKv8V9gG0FsVN2U4=
 github.com/rs/xid v1.3.0/go.mod h1:trrq9SKmegXys3aeAKXMUTdJsYXVwGY3RLcfgqegfbg=
 github.com/zserge/lorca v0.1.10 h1:f/xBJ3D3ipcVRCcvN8XqZnpoKcOXV8I4vwqlFyw7ruc=

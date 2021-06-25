@@ -31,7 +31,7 @@ func (f EatApi) GetIndex(args IdArgs) Eat {
 	}
 
 	var p = new(ProductApi)
-	productItem := p.GetIndex(IdArgs{Id: item.(Eat).ProductId})
+	productItem, _ := p.GetIndex(IdArgs{Id: item.(Eat).ProductId})
 	eatItem := item.(Eat)
 	eatItem.Product = productItem
 
@@ -54,7 +54,7 @@ func (f EatApi) GetFilterByDate(args DateArgs) []interface{} {
 	var p = new(ProductApi)
 
 	for i := 0; i < len(out); i++ {
-		productItem := p.GetIndex(IdArgs{Id: out[i].(Eat).ProductId})
+		productItem, _ := p.GetIndex(IdArgs{Id: out[i].(Eat).ProductId})
 		eatItem := out[i].(Eat)
 		eatItem.Product = productItem
 		eatItem.Product.Protein = UCTo(UCFrom(eatItem.Amount)/100*UCFrom(eatItem.Product.Protein), "g")
@@ -86,6 +86,24 @@ func (f EatApi) GetTotalStatByDate(args DateArgs) map[string]float64 {
 		out["protein"] += UCFrom(eatList[i].(Eat).Product.Protein)
 		out["carbohydrate"] += UCFrom(eatList[i].(Eat).Product.Carbohydrate)
 		out["fat"] += UCFrom(eatList[i].(Eat).Product.Fat)
+
+		if eatList[i].(Eat).Product.Name == "Вода" {
+			out["water"] += UCFrom(eatList[i].(Eat).Amount)
+		}
+	}
+
+	return out
+}
+
+// Get year calory stat
+func (f EatApi) GetYearMap(args DateArgs) map[string]interface{} {
+	out := map[string]interface{}{}
+
+	t1 := time.Date(args.Date.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	for i := 0; i < 366; i++ {
+		t2 := t1.AddDate(0, 0, i)
+		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(DateArgs{Date: t2})
 	}
 
 	return out

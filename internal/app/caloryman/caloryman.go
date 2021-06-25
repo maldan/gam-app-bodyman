@@ -20,6 +20,7 @@ func Start(frontFs embed.FS) {
 	var width = flag.Int("width", 1100, "Window Width")
 	var height = flag.Int("height", 900, "Window Height")
 	var dataDir = flag.String("data-dir", "db", "Data Directory")
+	_ = flag.String("app-id", "id", "App id")
 	flag.Parse()
 	DataDir = *dataDir
 
@@ -42,6 +43,8 @@ func Start(frontFs embed.FS) {
 			"eat":       new(EatApi),
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
+			"training":  TrainingApi{Table: "training"},
+			"weight":    WeightApi{Table: "weight"},
 		},
 	})
 }

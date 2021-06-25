@@ -29,10 +29,28 @@ type Eat struct {
 	Created   time.Time `json:"created"`
 }
 
+type Training struct {
+	Id         string    `json:"id"`
+	Title      string    `json:"title"`
+	MuscleList []string  `json:"muscleList"`
+	Tool       string    `json:"tool"`
+	Reps       int       `json:"reps"`
+	Weight     int       `json:"weight"`
+	Distance   int       `json:"distance"`
+	Duration   int       `json:"duration"`
+	Created    time.Time `json:"created"`
+}
+
 type Note struct {
 	Id          string    `json:"id"`
 	Description string    `json:"description"`
 	Created     time.Time `json:"created"`
+}
+
+type Weight struct {
+	Id      string    `json:"id"`
+	Value   float32   `json:"value"`
+	Created time.Time `json:"created"`
 }
 
 type IdArgs struct {
