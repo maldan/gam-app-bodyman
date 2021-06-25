@@ -4,7 +4,7 @@
       <div v-for="form in foodForm" :key="form">
         <div :class="$style.found_item" v-if="form.id">
           {{ form.name }}
-          <img @click="form.id = ''" class="clickable" src="../../asset/add.svg" />
+          <img @click="form.id = ''" class="clickable" src="../../asset/remove.svg" />
         </div>
         <Input
           v-if="!form.id"

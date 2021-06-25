@@ -4,25 +4,7 @@
 
     <div style="display: flex; height: calc(100% - 60px); margin-top: 10px">
       <!-- Eat History -->
-      <div class="block" style="margin-right: 10px; width: 320px; height: calc(100% - 10px)">
-        <!-- Header -->
-        <div class="header">
-          Eat history
-          <img @click="isShowAddEatForm = true" class="clickable" src="../asset/add.svg" alt="" />
-        </div>
-
-        <!-- List -->
-        <div class="body" style="height: calc(100% - 22px - 15px)">
-          <Eat
-            @edit="(isShowEditEatForm = true), (eatId = $event)"
-            v-for="(x, i) in eat"
-            :key="x.id"
-            :item="x"
-            :nextItem="eat[i + 1]"
-            style="margin-bottom: 15px"
-          />
-        </div>
-      </div>
+      <EatHistory :date="currentDate" />
 
       <!-- Second -->
       <div style="display: flex; flex-direction: column; width: 260px; margin-right: 10px">
@@ -91,12 +73,7 @@
       v-if="isShowAddNoteForm"
       @close="(isShowAddNoteForm = false), refresh()"
     />
-    <AddEat
-      :date="currentDate"
-      v-if="isShowAddEatForm"
-      @close="(isShowAddEatForm = false), refresh()"
-    />
-    <EditEat :id="eatId" v-if="isShowEditEatForm" @close="(isShowEditEatForm = false), refresh()" />
+
     <EditNote
       :id="noteId"
       v-if="isShowEditNoteForm"
@@ -110,22 +87,23 @@ import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
 import Eat from '../component/eat/Eat.vue';
 import AddNote from '../component/AddNote.vue';
-import AddEat from '../component/eat/AddEat.vue';
-import EditEat from '../component/eat/EditEat.vue';
+// import AddEat from '../component/eat/Add.vue';
+// import EditEat from '../component/eat/Edit.vue';
 import EditNote from '../component/EditNote.vue';
 import Schedule from '../component/Schedule.vue';
 import NoteList from '../component/NoteList.vue';
 import Header from '../component/Header.vue';
+import EatHistory from '../component/eat/History.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Eat, AddEat, Schedule, EditEat, NoteList, AddNote, EditNote, Header },
+  components: { Eat, Schedule, NoteList, AddNote, EditNote, Header, EatHistory },
   async mounted() {
     this.refresh();
   },
   methods: {
     async refresh() {
-      this.eat = await RestApi.eat.getFilterByDate(Moment(this.currentDate).format('YYYY-MM-DD'));
+      //this.eat = await RestApi.eat.getFilterByDate(Moment(this.currentDate).format('YYYY-MM-DD'));
       this.stat = await RestApi.eat.getTotalStatByDate(
         Moment(this.currentDate).format('YYYY-MM-DD'),
       );
@@ -136,11 +114,11 @@ export default defineComponent({
     return {
       eatId: '',
       noteId: '',
-      isShowAddEatForm: false,
-      isShowEditEatForm: false,
+      //isShowAddEatForm: false,
+      //isShowEditEatForm: false,
       isShowAddNoteForm: false,
       isShowEditNoteForm: false,
-      eat: [],
+      //eat: [],
       stat: {},
       currentDate: new Date(),
     };

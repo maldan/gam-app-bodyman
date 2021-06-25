@@ -128,4 +128,64 @@ export const RestApi = {
       return (await Axios.delete(`${API_URL}/note?id=${id}`)).data.response;
     },
   },
+  training: {
+    async getList() {
+      return (await Axios.get(`${API_URL}/training/list`)).data.response;
+    },
+    async get(id: string) {
+      return (await Axios.get(`${API_URL}/training?id=${id}`)).data.response;
+    },
+    async getFilterByDate(date: string) {
+      return (await Axios.get(`${API_URL}/training/filterByDate?date=${date}`)).data.response;
+    },
+    async update(
+      id: string,
+      title: string,
+      tool: string,
+      reps: number,
+      weight: number,
+      distance: number,
+      duration: number,
+      created: string,
+    ) {
+      return (
+        await Axios.patch(`${API_URL}/training`, {
+          id,
+          title,
+          muscleList: [],
+          tool,
+          reps,
+          weight,
+          distance,
+          duration,
+          created,
+        })
+      ).data.response;
+    },
+    async add(
+      title: string,
+      tool: string,
+      reps: number,
+      weight: number,
+      distance: number,
+      duration: number,
+      created: string,
+    ) {
+      return (
+        await Axios.post(`${API_URL}/training`, {
+          title,
+          muscleList: [],
+          tool,
+          reps,
+          weight,
+          distance,
+          duration,
+          created,
+        })
+      ).data.response;
+    },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/training?id=${id}`)).data.response;
+    },
+  },
 };

@@ -43,6 +43,8 @@ func Start(frontFs embed.FS) {
 			"eat":       new(EatApi),
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
+			"training":  TrainingApi{Table: "training"},
+			"weight":    WeightApi{Table: "weight"},
 		},
 	})
 }

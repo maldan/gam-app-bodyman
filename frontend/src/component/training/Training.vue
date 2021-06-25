@@ -2,19 +2,26 @@
   <div :class="$style.block">
     <div :class="$style.header">
       <div :class="$style.left">
-        {{ ~~item.calory }} kkal <span>({{ item.amount }})</span>
+        {{ item.reps ? `${item.weight}x${item.reps}` : `${item.distance} m` }}
+        <span>{{ item.tool }}</span>
       </div>
       <div :class="$style.right">{{ $root.moment(item.created).format('HH:mm') }}</div>
     </div>
     <div :class="$style.body">
       <div :class="$style.name">
-        {{ item.product.name }}
+        {{ item.title }}
+        <img
+          @click="$emit('copy', item.id)"
+          class="clickable"
+          src="../../asset/copy.svg"
+          alt=""
+          style="margin-left: auto"
+        />
         <img
           @click="$emit('edit', item.id)"
           class="clickable"
           src="../../asset/pencil.svg"
           alt=""
-          style="margin-left: auto"
         />
         <img
           @click="$emit('delete', item.id)"
@@ -23,11 +30,18 @@
           alt=""
         />
       </div>
-      <div :class="$style.component">
+      <div style="margin-top: 5px">
+        {{
+          $root.moment
+            .utc($root.moment.duration(item.duration, 'seconds').asMilliseconds())
+            .format('HH:mm:ss')
+        }}
+      </div>
+      <!-- <div :class="$style.component">
         <div><span>P</span> {{ item.product.protein }}</div>
         <div><span>C</span> {{ item.product.carbohydrate }}</div>
         <div><span>F</span> {{ item.product.fat }}</div>
-      </div>
+      </div> -->
     </div>
     <div :class="$style.gap" v-if="gap()">{{ gap() }}</div>
   </div>
@@ -59,10 +73,7 @@ export default defineComponent({
 
       const a = new Date(this.item.created).getTime() / 1000;
       const b = new Date(this.nextItem?.created || new Date()).getTime() / 1000;
-      if (b - a < 60 * 5) {
-        return null;
-      }
-      return Moment.utc(Moment.duration(b - a, 'seconds').asMilliseconds()).format('HH:mm');
+      return Moment.utc(Moment.duration(b - a, 'seconds').asMilliseconds()).format('HH:mm:ss');
     },
   },
   data: () => {
@@ -144,8 +155,7 @@ export default defineComponent({
     padding: 3px 10px;
     text-align: center;
     border-radius: 4px;
-    margin-top: 25px;
-    margin-bottom: 25px;
+    margin-top: 20px;
     color: #7be01e;
     position: relative;
     width: max-content;

@@ -1,18 +1,13 @@
 <template>
   <div class="block" :class="$style.header">
     <button
-      :class="selected('/') ? $style.selected : ''"
+      v-for="x in items"
+      :class="selected(x.url) ? $style.selected : ''"
       class="clickable"
-      @click="$router.push('/')"
+      @click="$router.push(x.url)"
+      :key="x.name"
     >
-      Main
-    </button>
-    <button
-      :class="selected('/db') ? $style.selected : ''"
-      class="clickable"
-      @click="$router.push('/db')"
-    >
-      DB
+      {{ x.name }}
     </button>
   </div>
 </template>
@@ -31,7 +26,13 @@ export default defineComponent({
     },
   },
   data: () => {
-    return {};
+    return {
+      items: [
+        { name: 'Eating', url: '/' },
+        { name: 'Training', url: '/training' },
+        { name: 'Product DB', url: '/product_db' },
+      ],
+    };
   },
 });
 </script>

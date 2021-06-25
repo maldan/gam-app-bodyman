@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
 import Main from '../page/Main.vue';
-import DB from '../page/DB.vue';
+import ProductDB from '../page/ProductDB.vue';
+import Training from '../page/Training.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -9,9 +10,14 @@ const routes: Array<RouteRecordRaw> = [
     component: Main,
   },
   {
-    path: '/db',
-    name: 'DB',
-    component: DB,
+    path: '/product_db',
+    name: 'ProductDB',
+    component: ProductDB,
+  },
+  {
+    path: '/training',
+    name: 'Training',
+    component: Training,
   },
 ];
 

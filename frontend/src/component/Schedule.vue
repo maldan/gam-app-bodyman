@@ -27,6 +27,7 @@
             :style="{ background: getPower(map[$root.moment(z).format('YYYY-MM-DD')]?.calory) }"
             v-for="z in days[i]"
             :key="z"
+            :title="map[$root.moment(z).format('YYYY-MM-DD')]?.calory"
           ></div>
         </div>
       </div>
