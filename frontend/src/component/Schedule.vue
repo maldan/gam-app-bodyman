@@ -3,13 +3,7 @@
     <div :class="$style.year">
       <div :class="$style.month" v-for="(x, i) in month" :key="x">
         <div>{{ x }}</div>
-        <div
-          style="
-            display: grid;
-            margin-top: 10px;
-            grid-template-columns: 14px 14px 14px 14px 14px 14px 14px;
-          "
-        >
+        <div style="display: grid; margin-top: 10px; grid-template-columns: repeat(7, 15px)">
           <div
             @click="$emit('select', z), (date = z)"
             class="clickable"
@@ -32,7 +26,9 @@
         </div>
       </div>
     </div>
-    <div style="margin-top: 15px">Date: {{ $root.moment(date).format('DD MMM YYYY') }}</div>
+    <div style="margin-top: 15px; color: #979797">
+      Date: {{ $root.moment(date).format('DD MMM YYYY') }}
+    </div>
   </div>
 </template>
 
@@ -61,11 +57,11 @@ export default defineComponent({
   methods: {
     getPower(calory: number) {
       if (calory === undefined) return 'transparent';
-      if (calory <= 0) return '#2b2b2b';
+      if (calory <= 0) return '#e2e2e223';
       if (calory >= 2500) return '#e8543c66';
-      else if (calory >= 2000) return '#eca54d66';
-      else if (calory >= 1600) return '#fff81487';
-      else return '#50ec4d66';
+      else if (calory >= 2000) return '#ff930cb0';
+      else if (calory >= 1600) return '#fff814a3';
+      else return '#26f33f73';
     },
     async getYearMap() {
       this.map = await RestApi.eat.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
@@ -117,16 +113,18 @@ export default defineComponent({
     .month {
       flex: 1;
       font-size: 12px;
+      color: #acacac;
 
       .cell {
         width: 12px;
         height: 12px;
         background: #2b2b2b;
-        border: 1px solid #444444;
+        // border: 1px solid transparent;
         font-size: 8px;
         display: flex;
         align-items: center;
         justify-content: center;
+        margin-bottom: 2px;
 
         &.null {
           pointer-events: none;

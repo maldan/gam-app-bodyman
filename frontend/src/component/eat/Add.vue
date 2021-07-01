@@ -128,7 +128,7 @@ export default defineComponent({
 
   .window {
     min-width: 320px;
-    background: #444444;
+    background: #313131a8;
     border-radius: 4px;
     padding: 25px;
     color: #fefefe;

@@ -59,7 +59,7 @@ export default defineComponent({
 
   .icon {
     flex: none;
-    background: #515151;
+    background: #63636382;
     height: 40px;
     width: 40px;
     display: flex;
@@ -82,7 +82,7 @@ export default defineComponent({
 
   input {
     box-sizing: border-box;
-    background: #3d3d3d;
+    background: #46464682;
     color: #9d9d9d;
     border: 0;
     padding: 10px;
