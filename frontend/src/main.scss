@@ -1,5 +1,9 @@
 @import 'font/monseratt/Montserrat.css';
 
+html {
+  // background: url('./asset/bg.jpg');
+}
+
 html,
 body {
   font-family: 'Montserrat', sans-serif;
@@ -7,10 +11,23 @@ body {
   -moz-osx-font-smoothing: grayscale;
   margin: 0;
   padding: 0;
-  background: #333333;
+  // backdrop-filter: blur(8px);
+  background-color: transparent;
   color: #fefefe;
   height: 100%;
   font-size: 16px;
+}
+
+* {
+  &::-webkit-scrollbar {
+    width: 10px;
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 50px;
+  }
 }
 
 #app {
@@ -40,11 +57,11 @@ a {
 }
 
 .block {
-  background: #444444;
-  padding: 15px;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 10px;
   border-radius: 6px;
-  border: 1px solid #545454;
-  box-shadow: 0px 1px 8px 3px #0000001f;
+  // border: 1px solid #545454;
+  // box-shadow: 0px 1px 8px 3px #0000001f;
   box-sizing: border-box;
 
   .body {
@@ -62,9 +79,9 @@ a {
   }
 
   .header {
-    color: #8b8b8b;
+    color: #979797;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 12px;
     margin-bottom: 15px;
     text-transform: uppercase;
     user-select: none;

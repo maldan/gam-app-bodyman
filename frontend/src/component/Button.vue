@@ -29,7 +29,7 @@ export default defineComponent({
 
 <style module lang="scss">
 .button {
-  background: #515151;
+  background: #63636382;
   color: #9d9d9d;
   border: 0;
   padding: 10px 15px;

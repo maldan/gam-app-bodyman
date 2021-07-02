@@ -1,5 +1,5 @@
 <template>
-  <div class="block" style="margin-right: 10px; width: 320px; height: calc(100% - 10px)">
+  <div class="block" style="height: calc(100% - 10px)">
     <!-- Header -->
     <div class="header">
       Eat history

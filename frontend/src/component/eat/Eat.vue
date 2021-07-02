@@ -83,7 +83,7 @@ export default defineComponent({
       padding: 5px 10px;
       border-radius: 6px 6px 0 0;
       color: #b1b1b1;
-      background: #2c2c2c;
+      background: #80808045;
       font-weight: bold;
 
       span {
@@ -104,7 +104,7 @@ export default defineComponent({
 
   .body {
     padding: 10px 15px;
-    background: #383838;
+    background: #80808045;
     border-radius: 0 0 6px 6px;
     color: #b1b1b1;
 
@@ -133,14 +133,14 @@ export default defineComponent({
           margin-right: auto;
         }
         flex: 1;
-        background: #292929;
+        background: #80808045;
         padding: 5px 10px;
       }
     }
   }
 
   .gap {
-    background: #2c2c2c;
+    background: #29292952;
     padding: 3px 10px;
     text-align: center;
     border-radius: 4px;

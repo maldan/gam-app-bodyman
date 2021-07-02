@@ -20,7 +20,14 @@
         v-model="distance"
       />
       <Input icon="time" placeholder="Duration..." style="margin-bottom: 10px" v-model="duration" />
-      <Input icon="date" placeholder="Date..." style="margin-bottom: 10px" v-model="created" />
+      <Input
+        icon="date"
+        placeholder="Date..."
+        style="margin-bottom: 10px"
+        v-model="created"
+        functionIcon="date"
+        :functionClick="currentTime"
+      />
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
@@ -71,6 +78,9 @@ export default defineComponent({
         this.created,
       );
       this.$emit('close');
+    },
+    currentTime() {
+      return Moment().format('YYYY-MM-DD HH:mm:ss');
     },
   },
   data() {

@@ -2,15 +2,15 @@
   <div class="main">
     <Header />
 
-    <div style="display: flex; height: calc(100% - 60px); margin-top: 10px">
+    <div class="body" style="display: flex; height: calc(100% - 50px)">
       <!-- Eat History -->
       <EatHistory :date="currentDate" />
 
       <!-- Second -->
-      <div style="display: flex; flex-direction: column; width: 260px; margin-right: 10px">
-        <div class="block" style="margin-bottom: 10px">
+      <div class="block_row" style="display: flex; flex-direction: column; width: 260px">
+        <div class="block">
           <div class="header">Total Eat</div>
-          <div class="body">
+          <div class="body" style="display: flex; flex-direction: column">
             <div class="total_item" v-for="(v, k) in stat" :key="k">
               <div>{{ k }}</div>
               <div style="text-align: right">{{ ~~v }}</div>
@@ -18,7 +18,7 @@
           </div>
         </div>
 
-        <div class="block" style="margin-bottom: 10px">
+        <!-- <div class="block">
           <div class="header">Total Vitamin</div>
           <div class="body component_list">
             <div>A</div>
@@ -37,48 +37,20 @@
             <div>Iron</div>
             <div>Iron</div>
           </div>
-        </div>
+        </div> -->
       </div>
 
       <!-- Third -->
       <div style="flex: 1">
         <!-- Schedule -->
-        <div class="block" style="margin-bottom: 10px">
+        <div class="block">
           <div class="header">Schedule</div>
           <div class="body">
             <Schedule @select="(currentDate = $event), refresh()" />
           </div>
         </div>
-
-        <!-- Notes -->
-        <div class="block" style="height: calc(100% - 445px)">
-          <div class="header">
-            Notes
-            <img
-              @click="isShowAddNoteForm = true"
-              class="clickable"
-              src="../asset/add.svg"
-              alt=""
-            />
-          </div>
-          <div class="body" style="height: calc(100% - 22px - 15px)">
-            <NoteList ref="note_list" @edit="(isShowEditNoteForm = true), (noteId = $event)" />
-          </div>
-        </div>
       </div>
     </div>
-
-    <AddNote
-      :date="currentDate"
-      v-if="isShowAddNoteForm"
-      @close="(isShowAddNoteForm = false), refresh()"
-    />
-
-    <EditNote
-      :id="noteId"
-      v-if="isShowEditNoteForm"
-      @close="(isShowEditNoteForm = false), refresh()"
-    />
   </div>
 </template>
 
@@ -86,18 +58,13 @@
 import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
 import Eat from '../component/eat/Eat.vue';
-import AddNote from '../component/AddNote.vue';
-// import AddEat from '../component/eat/Add.vue';
-// import EditEat from '../component/eat/Edit.vue';
-import EditNote from '../component/EditNote.vue';
 import Schedule from '../component/Schedule.vue';
-import NoteList from '../component/NoteList.vue';
 import Header from '../component/Header.vue';
 import EatHistory from '../component/eat/History.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Eat, Schedule, NoteList, AddNote, EditNote, Header, EatHistory },
+  components: { Eat, Schedule, Header, EatHistory },
   async mounted() {
     this.refresh();
   },
@@ -132,9 +99,22 @@ export default defineComponent({
   height: 100%;
   padding: 10px;
 
+  .body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
+
+    .block_row {
+      > .block {
+        margin-bottom: 10px;
+      }
+    }
+  }
+
   .total_item {
     display: flex;
-    background: #2b2b2b;
+    background: #80808045;
     font-size: 15px;
     color: #a5a5a5;
     text-transform: capitalize;
@@ -157,7 +137,7 @@ export default defineComponent({
     grid-template-columns: 1fr 1fr 1fr;
 
     > div {
-      background: #2b2b2b;
+      background: #80808045;
       font-size: 14px;
       padding: 5px 10px;
       text-align: center;

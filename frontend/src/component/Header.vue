@@ -31,6 +31,7 @@ export default defineComponent({
         { name: 'Eating', url: '/' },
         { name: 'Training', url: '/training' },
         { name: 'Product DB', url: '/product_db' },
+        { name: 'Notes', url: '/notes' },
       ],
     };
   },

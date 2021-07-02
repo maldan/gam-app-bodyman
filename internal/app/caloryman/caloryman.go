@@ -16,11 +16,12 @@ var DataDir = "db"
 func Start(frontFs embed.FS) {
 	var host = flag.String("host", "127.0.0.1", "Server Hostname")
 	var port = flag.Int("port", 16000, "Server Port")
+	_ = flag.Int("clientPort", 8080, "Client Port")
 	var gui = flag.Bool("gui", false, "Use Gui")
 	var width = flag.Int("width", 1100, "Window Width")
 	var height = flag.Int("height", 900, "Window Height")
-	var dataDir = flag.String("data-dir", "db", "Data Directory")
-	_ = flag.String("app-id", "id", "App id")
+	var dataDir = flag.String("dataDir", "db", "Data Directory")
+	_ = flag.String("appId", "id", "App id")
 	flag.Parse()
 	DataDir = *dataDir
 

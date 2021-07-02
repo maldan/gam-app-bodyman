@@ -60,14 +60,13 @@ export default defineComponent({
       .left,
       .right {
         padding: 5px 10px;
-        background: #383838;
+        background: #0000004d;
         border-radius: 6px 6px 0 0;
-        color: #b1b1b1;
-        background: #2c2c2c;
+        color: #979797;
         font-weight: bold;
 
         span {
-          color: #bdbdbd;
+          color: #979797;
           font-style: italic;
           font-weight: 300;
         }
@@ -88,9 +87,9 @@ export default defineComponent({
 
     .body {
       padding: 10px 15px;
-      background: #383838;
+      background: #0000004d;
       border-radius: 0 0 6px 6px;
-      color: #b1b1b1;
+      color: #979797;
     }
 
     &:last-child {
