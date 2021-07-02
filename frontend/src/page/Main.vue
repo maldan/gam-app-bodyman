@@ -10,7 +10,7 @@
       <div class="block_row" style="display: flex; flex-direction: column; width: 260px">
         <div class="block">
           <div class="header">Total Eat</div>
-          <div class="body">
+          <div class="body" style="display: flex; flex-direction: column">
             <div class="total_item" v-for="(v, k) in stat" :key="k">
               <div>{{ k }}</div>
               <div style="text-align: right">{{ ~~v }}</div>
