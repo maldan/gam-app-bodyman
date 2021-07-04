@@ -2,37 +2,36 @@
   <div class="main">
     <Header />
 
-    <NoteList
+    <Button
+      @click="isShowAddForm = !isShowAddForm"
+      text="Add"
+      icon="add"
+      style="flex: 1; margin-top: 10px"
+    />
+
+    <List
       style="margin-top: 10px"
       ref="note_list"
-      @edit="(isShowEditNoteForm = true), (noteId = $event)"
+      @edit="(isShowEditForm = true), (noteId = $event)"
     />
 
-    <AddNote
-      :date="currentDate"
-      v-if="isShowAddNoteForm"
-      @close="(isShowAddNoteForm = false), refresh()"
-    />
-
-    <EditNote
-      :id="noteId"
-      v-if="isShowEditNoteForm"
-      @close="(isShowEditNoteForm = false), refresh()"
-    />
+    <Add :date="currentDate" v-if="isShowAddForm" @close="(isShowAddForm = false), refresh()" />
+    <Edit :id="noteId" v-if="isShowEditForm" @close="(isShowEditForm = false), refresh()" />
   </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
-import AddNote from '../component/AddNote.vue';
-import EditNote from '../component/EditNote.vue';
-import NoteList from '../component/NoteList.vue';
+import Add from '../component/note/Add.vue';
+import Edit from '../component/note/Edit.vue';
+import List from '../component/note/List.vue';
 import Header from '../component/Header.vue';
+import Button from '../component/Button.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { NoteList, AddNote, EditNote, Header },
+  components: { List, Add, Edit, Header, Button },
   async mounted() {
     this.refresh();
   },
@@ -47,8 +46,8 @@ export default defineComponent({
   data: () => {
     return {
       noteId: '',
-      isShowAddNoteForm: false,
-      isShowEditNoteForm: false,
+      isShowAddForm: false,
+      isShowEditForm: false,
       stat: {},
       currentDate: new Date(),
     };
@@ -61,5 +60,7 @@ export default defineComponent({
   box-sizing: border-box;
   height: 100%;
   padding: 10px;
+  display: flex;
+  flex-direction: column;
 }
 </style>

@@ -3,6 +3,39 @@ import Axios from 'axios';
 const API_URL = process.env.VUE_APP_API_URL || `${window.location.origin}/api`;
 
 export const RestApi = {
+  exercise: {
+    async getList() {
+      return (await Axios.get(`${API_URL}/exercise/list`)).data.response;
+    },
+    async get(id: string) {
+      return (await Axios.get(`${API_URL}/exercise?id=${id}`)).data.response;
+    },
+    async findByName(name: string) {
+      return (await Axios.get(`${API_URL}/exercise/byName?name=${name}`)).data.response;
+    },
+    async add(name: string, tool: string, muscleList: string[]) {
+      return (
+        await Axios.post(`${API_URL}/exercise`, {
+          name,
+          tool,
+          muscleList,
+        })
+      ).data.response;
+    },
+    async update(id: string, name: string, tool: string, muscleList: string[]) {
+      return (
+        await Axios.patch(`${API_URL}/exercise`, {
+          id,
+          name,
+          tool,
+          muscleList,
+        })
+      ).data.response;
+    },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/exercise?id=${id}`)).data.response;
+    },
+  },
   product: {
     async getList() {
       return (await Axios.get(`${API_URL}/product/list`)).data.response;
@@ -138,10 +171,15 @@ export const RestApi = {
     async getFilterByDate(date: string) {
       return (await Axios.get(`${API_URL}/training/filterByDate?date=${date}`)).data.response;
     },
+    async getTotalStatByDate(date: string) {
+      return (await Axios.get(`${API_URL}/training/totalStatByDate?date=${date}`)).data.response;
+    },
+    async getYearMap(date: string) {
+      return (await Axios.get(`${API_URL}/training/yearMap?date=${date}`)).data.response;
+    },
     async update(
       id: string,
-      title: string,
-      tool: string,
+      exerciseId: string,
       reps: number,
       weight: number,
       distance: number,
@@ -151,9 +189,7 @@ export const RestApi = {
       return (
         await Axios.patch(`${API_URL}/training`, {
           id,
-          title,
-          muscleList: [],
-          tool,
+          exerciseId,
           reps,
           weight,
           distance,
@@ -163,8 +199,7 @@ export const RestApi = {
       ).data.response;
     },
     async add(
-      title: string,
-      tool: string,
+      exerciseId: string,
       reps: number,
       weight: number,
       distance: number,
@@ -173,9 +208,7 @@ export const RestApi = {
     ) {
       return (
         await Axios.post(`${API_URL}/training`, {
-          title,
-          muscleList: [],
-          tool,
+          exerciseId,
           reps,
           weight,
           distance,

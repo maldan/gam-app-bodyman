@@ -4,7 +4,7 @@
 
     <div class="body" style="display: flex; height: calc(100% - 50px)">
       <!-- Eat History -->
-      <EatHistory :date="currentDate" />
+      <EatHistory :date="currentDate" style="width: 320px" />
 
       <!-- Second -->
       <div class="block_row" style="display: flex; flex-direction: column; width: 260px">

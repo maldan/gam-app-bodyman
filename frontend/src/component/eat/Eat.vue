@@ -140,7 +140,7 @@ export default defineComponent({
   }
 
   .gap {
-    background: #29292952;
+    background: #80808045;
     padding: 3px 10px;
     text-align: center;
     border-radius: 4px;

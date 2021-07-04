@@ -1,15 +1,34 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.window">
-      <Input icon="title" placeholder="Title..." style="margin-bottom: 10px" v-model="title" />
+      <Input
+        v-if="!exerciseId"
+        icon="title"
+        placeholder="Title..."
+        style="margin-bottom: 10px"
+        v-model="title"
+        @change="searchExercise(title)"
+      />
 
-      <Select
+      <div :class="$style.found_item" v-if="exerciseId">
+        {{ title }}
+        <img @click="exerciseId = ''" class="clickable" src="../../asset/remove.svg" />
+      </div>
+
+      <!-- <Select
         icon="date"
         placeholder="Tool..."
         style="margin-bottom: 10px"
         :items="toolList"
         v-model="tool"
-      />
+      /> -->
+
+      <!--<Input
+        icon="weight"
+        placeholder="Muscle List..."
+        style="margin-bottom: 10px"
+        v-model="muscleList"
+      />-->
 
       <Input icon="date" placeholder="Reps..." style="margin-bottom: 10px" v-model="reps" />
       <Input icon="weight" placeholder="Weight..." style="margin-bottom: 10px" v-model="weight" />
@@ -44,6 +63,7 @@ import Button from '../Button.vue';
 import Input from '../Input.vue';
 import Select from '../Select.vue';
 import Moment from 'moment';
+import { Helper } from '../../util/Helper';
 
 export default defineComponent({
   props: {
@@ -54,8 +74,9 @@ export default defineComponent({
   async mounted() {
     const training = await RestApi.training.get(this.id + '');
 
-    this.title = training.title;
-    this.tool = { label: training.tool, value: training.tool };
+    this.exerciseId = training.exerciseId;
+    this.title = training.exercise?.name;
+
     this.reps = training.reps;
     this.distance = training.distance;
     this.weight = training.weight;
@@ -65,11 +86,23 @@ export default defineComponent({
     this.created = Moment(training.created).format('YYYY-MM-DD HH:mm:ss');
   },
   methods: {
+    async searchExercise() {
+      try {
+        const product = await RestApi.exercise.findByName(this.title);
+        this.exerciseId = product.id;
+        this.title = product.name;
+      } catch {
+        try {
+          const product = await RestApi.exercise.findByName(Helper.traslit(this.title));
+          this.exerciseId = product.id;
+          this.title = product.name;
+        } catch {}
+      }
+    },
     async submit() {
       await RestApi.training.update(
         this.id + '',
-        this.title,
-        this.tool.value,
+        this.exerciseId,
         Number(this.reps),
         Number(this.weight),
         Number(this.distance),
@@ -84,18 +117,7 @@ export default defineComponent({
   },
   data() {
     return {
-      toolList: [
-        { label: 'Own Weight', value: 'own_weight' },
-        { label: 'Barbell', value: 'barbell' },
-        { label: 'Dumbbell', value: 'dumbbell' },
-        { label: 'Dumbbell x 2', value: 'dumbbell_2' },
-        { label: 'Spring Gripper', value: 'spring_gripper' },
-        { label: 'Skipping Rope', value: 'skipping_rope' },
-      ],
-      tool: {
-        label: '',
-        value: '',
-      },
+      exerciseId: '',
       title: '',
       distance: '',
       reps: '',

@@ -6,12 +6,26 @@
       <History :date="currentDate" />
 
       <!-- Second -->
-      <div style="display: flex; flex-direction: column; width: 260px; margin-right: 10px">
+      <div style="display: flex; flex-direction: column; width: 290px; margin-right: 10px">
         <div class="block" style="margin-bottom: 10px">
           <div class="header">Total Power</div>
           <div class="body">
-            <div class="total_item" v-for="(v, k) in stat" :key="k">
-              <div>{{ k }}</div>
+            <div class="total_item" v-for="(v, k) in stat.tool" :key="k">
+              <div @click="(type = 'tool'), (mode = k)" class="clickable">
+                {{ k.split('_').join(' ') }}
+              </div>
+              <div style="text-align: right">{{ ~~v }}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="block" style="margin-bottom: 10px">
+          <div class="header">Total Power</div>
+          <div class="body">
+            <div class="total_item" v-for="(v, k) in stat.muscle" :key="k">
+              <div @click="(type = 'muscle'), (mode = k)" class="clickable">
+                {{ k.split('_').join(' ') }}
+              </div>
               <div style="text-align: right">{{ ~~v }}</div>
             </div>
           </div>
@@ -24,7 +38,7 @@
         <div class="block" style="margin-bottom: 10px">
           <div class="header">Schedule</div>
           <div class="body">
-            <Schedule @select="(currentDate = $event), refresh()" />
+            <Schedule :type="type" :mode="mode" @select="(currentDate = $event), refresh()" />
           </div>
         </div>
       </div>
@@ -36,17 +50,28 @@
 import { defineComponent } from 'vue';
 import History from '../component/training/History.vue';
 import Header from '../component/Header.vue';
-import Schedule from '../component/Schedule.vue';
+import Schedule from '../component/training/Schedule.vue';
+import { RestApi } from '../util/RestApi';
+import Moment from 'moment';
 
 export default defineComponent({
   components: { Header, History, Schedule },
-  mounted() {},
+  async mounted() {
+    this.refresh();
+  },
   methods: {
-    refresh() {},
+    async refresh() {
+      this.stat = await RestApi.training.getTotalStatByDate(
+        Moment(this.currentDate).format('YYYY-MM-DD'),
+      );
+    },
   },
   data: () => {
     return {
       currentDate: new Date(),
+      stat: {},
+      type: 'tool',
+      mode: 'total',
     };
   },
 });
@@ -57,5 +82,26 @@ export default defineComponent({
   box-sizing: border-box;
   height: 100%;
   padding: 10px;
+
+  .body {
+    .total_item {
+      display: flex;
+      background: #80808045;
+      font-size: 15px;
+      color: #a5a5a5;
+      text-transform: capitalize;
+      margin-bottom: 5px;
+      padding: 5px 10px;
+      border-radius: 4px;
+
+      > div {
+        flex: 1;
+      }
+
+      > div:last-child {
+        font-weight: bold;
+      }
+    }
+  }
 }
 </style>
