@@ -34,6 +34,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { Helper } from '../../util/Helper';
 import { RestApi } from '../../util/RestApi';
 import Button from '../Button.vue';
 import Input from '../Input.vue';
@@ -67,13 +68,13 @@ export default defineComponent({
         form.name = product.name;
       } catch {
         try {
-          const product = await RestApi.product.findByName(this.defuck(form.name));
+          const product = await RestApi.product.findByName(Helper.traslit(form.name));
           form.id = product.id;
           form.name = product.name;
         } catch {}
       }
     },
-    defuck(x: string) {
+    /*defuck(x: string) {
       const a = "`qwertyuiop[]asdfghjkl;'zxcvbnm,.";
       const b = 'ёйцукенгшщзхъфывапролджэячсмитьбю';
       let out = x.split('');
@@ -86,7 +87,7 @@ export default defineComponent({
         }
       }
       return out.join('');
-    },
+    },*/
     async submit() {
       for (let i = 0; i < this.foodForm.length; i++) {
         if (!this.foodForm[i].id) {

@@ -5,11 +5,11 @@
         <img
           @click="$emit('edit', note.id)"
           class="clickable"
-          src="../asset/pencil.svg"
+          src="../../asset/pencil.svg"
           alt=""
           style="margin-left: auto"
         />
-        <img @click="remove(note.id)" class="clickable" src="../asset/trash.svg" alt="" />
+        <img @click="remove(note.id)" class="clickable" src="../../asset/trash.svg" alt="" />
         <div :class="$style.right">{{ $root.moment(note.created).fromNow() }}</div>
       </div>
       <div :class="$style.body">
@@ -21,7 +21,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { RestApi } from '../util/RestApi';
+import { RestApi } from '../../util/RestApi';
 
 export default defineComponent({
   props: {},

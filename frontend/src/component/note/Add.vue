@@ -5,7 +5,7 @@
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
-        <Button @click="submit()" text="Save" icon="add" style="margin-left: 5px" />
+        <Button @click="submit()" text="Add" icon="add" style="margin-left: 5px" />
       </div>
     </div>
   </div>
@@ -13,22 +13,19 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { RestApi } from '../util/RestApi';
-import Button from './Button.vue';
-import TextArea from './TextArea.vue';
+import { RestApi } from '../../util/RestApi';
+import Button from '../Button.vue';
+import TextArea from '../TextArea.vue';
 
 export default defineComponent({
   props: {
-    id: String,
+    date: Object,
   },
   components: { Button, TextArea },
-  async mounted() {
-    const note = await RestApi.note.get(this.id + '');
-    this.description = note.description;
-  },
+  async mounted() {},
   methods: {
     async submit() {
-      await RestApi.note.update(this.id + '', this.description);
+      await RestApi.note.add(this.description);
       this.$emit('close');
     },
   },

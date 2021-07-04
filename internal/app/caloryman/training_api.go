@@ -2,6 +2,7 @@ package caloryman
 
 import (
 	"sort"
+	"time"
 
 	"github.com/maldan/go-cmhp"
 	"github.com/maldan/go-docdb"
@@ -15,8 +16,8 @@ type TrainingApi struct {
 
 func (f TrainingApi) GetIndex(args IdArgs) (Training, int) {
 	// Find training
-	trainingList := f.GetList()
-	item, itemId := cmhp.SliceFindR(trainingList, func(i interface{}) bool {
+	list := f.GetList()
+	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
 		return i.(Training).Id == args.Id
 	})
 
@@ -25,7 +26,11 @@ func (f TrainingApi) GetIndex(args IdArgs) (Training, int) {
 		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Training not found!")
 	}
 
-	return item.(Training), itemId
+	e := ExerciseApi{Table: "exercise"}
+	itemOut := item.(Training)
+	itemOut.Exercise, _ = e.GetIndexSafe(IdArgs{Id: item.(Training).ExerciseId})
+
+	return itemOut, itemId
 }
 
 func (f TrainingApi) GetList() []Training {
@@ -42,23 +47,94 @@ func (f TrainingApi) GetFilterByDate(args DateArgs) []interface{} {
 	sort.SliceStable(out, func(i, j int) bool {
 		return out[i].(Training).Created.UTC().Unix() < out[j].(Training).Created.UTC().Unix()
 	})
+
+	e := ExerciseApi{Table: "exercise"}
+	for itemId, item := range out {
+		training := item.(Training)
+		training.Exercise, _ = e.GetIndexSafe(IdArgs{Id: item.(Training).ExerciseId})
+		out[itemId] = training
+	}
+
+	return out
+}
+
+func (f TrainingApi) GetTotalStatByDate(args DateArgs) map[string]map[string]float64 {
+	list := f.GetFilterByDate(DateArgs{Date: args.Date})
+	out := map[string]map[string]float64{
+		"tool": {
+			"own_weight":     0,
+			"barbell":        0,
+			"dumbbell":       0,
+			"dumbbell_2":     0,
+			"spring_gripper": 0,
+			"total":          0,
+		},
+		"muscle": {
+			"biceps":      0,
+			"chest":       0,
+			"palm":        0,
+			"triceps":     0,
+			"shrugs":      0,
+			"quadriceps":  0,
+			"buttock":     0,
+			"front_delta": 0,
+			"back_delta":  0,
+			"abs":         0,
+			"total":       0,
+		},
+	}
+
+	for i := 0; i < len(list); i++ {
+		if list[i].(Training).Exercise.Tool == "own_weight" {
+			out["tool"][list[i].(Training).Exercise.Tool] += float64(list[i].(Training).Weight+60) * float64(list[i].(Training).Reps)
+			out["tool"]["total"] += float64(list[i].(Training).Weight+60) * float64(list[i].(Training).Reps)
+
+			for _, muscle := range list[i].(Training).Exercise.MuscleList {
+				out["muscle"][muscle] += float64(list[i].(Training).Weight+60) * float64(list[i].(Training).Reps)
+				out["muscle"]["total"] += float64(list[i].(Training).Weight+60) * float64(list[i].(Training).Reps)
+			}
+		} else {
+			out["tool"][list[i].(Training).Exercise.Tool] += float64(list[i].(Training).Weight) * float64(list[i].(Training).Reps)
+			out["tool"]["total"] += float64(list[i].(Training).Weight) * float64(list[i].(Training).Reps)
+
+			for _, muscle := range list[i].(Training).Exercise.MuscleList {
+				out["muscle"][muscle] += float64(list[i].(Training).Weight) * float64(list[i].(Training).Reps)
+				out["muscle"]["total"] += float64(list[i].(Training).Weight) * float64(list[i].(Training).Reps)
+			}
+		}
+	}
+
+	return out
+}
+
+// Get year calory stat
+func (f TrainingApi) GetYearMap(args DateArgs) map[string]interface{} {
+	out := map[string]interface{}{}
+
+	t1 := time.Date(args.Date.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
+
+	for i := 0; i < 366; i++ {
+		t2 := t1.AddDate(0, 0, i)
+		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(DateArgs{Date: t2})
+	}
+
 	return out
 }
 
 func (f TrainingApi) PostIndex(args Training) {
 	list := f.GetList()
 	args.Id = xid.New().String()
-	if args.MuscleList == nil {
+	/*if args.MuscleList == nil {
 		args.MuscleList = make([]string, 0)
-	}
+	}*/
 	list = append(list, args)
 	docdb.Save(DataDir, f.Table, &list)
 }
 
 func (f TrainingApi) PatchIndex(args Training) {
-	if args.MuscleList == nil {
+	/*if args.MuscleList == nil {
 		args.MuscleList = make([]string, 0)
-	}
+	}*/
 
 	_, trainingId := f.GetIndex(IdArgs{Id: args.Id})
 	list := f.GetList()

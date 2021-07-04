@@ -29,16 +29,27 @@ type Eat struct {
 	Created   time.Time `json:"created"`
 }
 
+type Exercise struct {
+	Id         string   `json:"id"`
+	Name       string   `json:"name"`
+	MuscleList []string `json:"muscleList"`
+	Tool       string   `json:"tool"`
+}
+
 type Training struct {
-	Id         string    `json:"id"`
-	Title      string    `json:"title"`
-	MuscleList []string  `json:"muscleList"`
-	Tool       string    `json:"tool"`
-	Reps       int       `json:"reps"`
-	Weight     int       `json:"weight"`
-	Distance   int       `json:"distance"`
-	Duration   int       `json:"duration"`
-	Created    time.Time `json:"created"`
+	Id         string   `json:"id"`
+	ExerciseId string   `json:"exerciseId"`
+	Exercise   Exercise `json:"exercise"`
+
+	//Title      string   `json:"title"`
+	//MuscleList []string `json:"muscleList"`
+	//Tool       string   `json:"tool"`
+
+	Reps     int       `json:"reps"`
+	Weight   int       `json:"weight"`
+	Distance int       `json:"distance"`
+	Duration int       `json:"duration"`
+	Created  time.Time `json:"created"`
 }
 
 type Note struct {

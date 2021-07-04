@@ -3,13 +3,13 @@
     <div :class="$style.header">
       <div :class="$style.left">
         {{ item.reps ? `${item.weight}x${item.reps}` : `${item.distance} m` }}
-        <span>{{ item.tool }}</span>
+        <span>{{ item.exercise?.tool }}</span>
       </div>
       <div :class="$style.right">{{ $root.moment(item.created).format('HH:mm') }}</div>
     </div>
     <div :class="$style.body">
       <div :class="$style.name">
-        {{ item.title }}
+        {{ item.exercise?.name }}
         <img
           @click="$emit('copy', item.id)"
           class="clickable"
@@ -94,7 +94,7 @@ export default defineComponent({
       padding: 5px 10px;
       border-radius: 6px 6px 0 0;
       color: #b1b1b1;
-      background: #2c2c2c;
+      background: #80808045;
       font-weight: bold;
 
       span {
@@ -115,7 +115,7 @@ export default defineComponent({
 
   .body {
     padding: 10px 15px;
-    background: #383838;
+    background: #80808045;
     border-radius: 0 0 6px 6px;
     color: #b1b1b1;
 
@@ -144,14 +144,14 @@ export default defineComponent({
           margin-right: auto;
         }
         flex: 1;
-        background: #292929;
+        background: #80808045;
         padding: 5px 10px;
       }
     }
   }
 
   .gap {
-    background: #2c2c2c;
+    background: #80808045;
     padding: 3px 10px;
     text-align: center;
     border-radius: 4px;
