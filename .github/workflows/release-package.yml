@@ -22,7 +22,7 @@ jobs:
       - run: zip -9 -r application-linux-amd64.zip app
       - run: zip -9 -r application-windows-amd64.zip app.exe
       - run: rm app
-      - run: GOARCH=arm64 GOOS=linux go build -ldflags "-s -w" .
+      - run: GOARCH=arm64 GOOS=linux go build -ldflags "-s -w" app .
       - run: zip -9 -r application-linux-arm64.zip app
 
       - run: echo "RELEASE_VERSION=`git tag | sort -V | tail -1`" >> $GITHUB_ENV
