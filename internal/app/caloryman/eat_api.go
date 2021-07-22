@@ -1,7 +1,6 @@
 package caloryman
 
 import (
-	"fmt"
 	"sort"
 	"time"
 
@@ -22,7 +21,7 @@ func (r EatApi) GetIndex(args ArgsId) Eat {
 	}
 	// Append product
 	r1 := ProductApi{}
-	item.Product = r1.GetIndex(ArgsId{Id: item.ProductId})
+	item.Product = r1.GetSafeIndex(ArgsId{Id: item.ProductId})
 	return item
 }
 
@@ -47,15 +46,8 @@ func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 			continue
 		}
 
-		// Not date, skip
-		if !(item.Created.Year() == args.Date.Year() &&
-			item.Created.Month() == args.Date.Month() &&
-			item.Created.YearDay() == args.Date.YearDay()) {
-			continue
-		}
-
 		// Get product for eat
-		product := r1.GetIndex(ArgsId{Id: item.ProductId})
+		product := r1.GetSafeIndex(ArgsId{Id: item.ProductId})
 		item.Product = product
 
 		// Calculate components
@@ -76,7 +68,7 @@ func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 	return out
 }
 
-// Get total stat for date
+// Get total stat by date
 func (f EatApi) GetTotalStatByDate(args ArgsDate) map[string]float64 {
 	var list = f.GetFilterByDate(ArgsDate{Date: args.Date})
 	out := map[string]float64{
@@ -106,12 +98,10 @@ func (f EatApi) GetYearMap(args ArgsDate) map[string]interface{} {
 	out := map[string]interface{}{}
 	t1 := time.Date(args.Date.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 
-	start := time.Now()
 	for i := 0; i < 366; i++ {
 		t2 := t1.AddDate(0, 0, i)
 		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(ArgsDate{Date: t2})
 	}
-	fmt.Println(time.Since(start))
 
 	return out
 }

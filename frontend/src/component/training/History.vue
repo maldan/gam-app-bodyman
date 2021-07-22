@@ -11,6 +11,7 @@
       <Training
         @edit="(isShowEditForm = true), (id = $event)"
         @copy="(isShowAddForm = true), (id = $event)"
+        @delete="remove(x.id)"
         v-for="(x, i) in list"
         :key="x.id"
         :item="x"
@@ -58,6 +59,12 @@ export default defineComponent({
   methods: {
     async refresh() {
       this.list = await RestApi.training.getFilterByDate(Moment(this.date).format('YYYY-MM-DD'));
+    },
+    async remove(id: string) {
+      if (confirm('Are you sure?')) {
+        await RestApi.training.delete(id);
+      }
+      this.refresh();
     },
   },
   data: () => {

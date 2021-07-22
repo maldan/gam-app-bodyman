@@ -10,6 +10,14 @@ import (
 type ProductApi struct {
 }
 
+// Get product without error
+func (r ProductApi) GetSafeIndex(args ArgsId) Product {
+	// Get file with product
+	var item Product
+	cmhp.FileReadAsJSON(DataDir+"/product/"+args.Id+".json", &item)
+	return item
+}
+
 // Get product
 func (r ProductApi) GetIndex(args ArgsId) Product {
 	// Get file with product

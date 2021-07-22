@@ -59,16 +59,22 @@ func Start(frontFs embed.FS) {
 
 	docdb.Start()
 
-	/*list := DB_productList()
+	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.data")
+	x, _ := cmhp.DataDecompress(d)
+	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.json", x)
+
+	var list []Exercise
+	cmhp.FileReadAsJSON(DataDir+"/exercise.json", &list)
+
 	for _, item := range list {
-		cmhp.FileWriteAsJSON(DataDir+"/product/"+item.Id+".json", &item)
+		cmhp.FileWriteAsJSON(DataDir+"/exercise/"+item.Id+".json", &item)
 
 		// fmt.Println(item)
 		//itemIdList := make([]string, 0)
-		//cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+		//cmhp.FileReadAsJSON(DataDir+"/training/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
 		// cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+item.Id+".json", &item)
 		//itemIdList = append(itemIdList, item.Id)
-		//cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+		//cmhp.FileWriteAsJSON(DataDir+"/training/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
 	}*/
 
 	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.data")

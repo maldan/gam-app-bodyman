@@ -1,12 +1,5 @@
 package caloryman
 
-import (
-	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
-	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
-)
-
 type ComponentApi int
 
 type ComponentApi_PostIndexArgs struct {
@@ -16,7 +9,7 @@ type ComponentApi_PostIndexArgs struct {
 	Description string
 }
 
-func (f ComponentApi) GetIndex(args ArgsId) Component {
+/*func (f ComponentApi) GetIndex(args ArgsId) Component {
 	var component []Component
 	docdb.Get(DataDir, "component", &component)
 	item, itemId := cmhp.SliceFindR(component, func(i interface{}) bool {
@@ -72,4 +65,4 @@ func (f ComponentApi) DeleteIndex(args ArgsId) {
 		return i.(Component).Id != args.Id
 	})
 	docdb.Save(DataDir, "component", &out)
-}
+}*/

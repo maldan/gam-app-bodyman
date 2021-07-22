@@ -1,17 +1,10 @@
 package caloryman
 
-import (
-	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
-	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
-)
-
 type WeightApi struct {
 	Table string
 }
 
-func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
+/*func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -52,4 +45,4 @@ func (f WeightApi) DeleteIndex(args ArgsId) {
 		return i.(Weight).Id != args.Id
 	})
 	docdb.Save(DataDir, f.Table, &out)
-}
+}*/

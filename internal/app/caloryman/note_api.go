@@ -2,12 +2,11 @@ package caloryman
 
 import (
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
 )
 
 type NoteApi int
@@ -19,52 +18,42 @@ type NoteApi_PostIndexArgs struct {
 }
 
 // Get note by id
-func (f NoteApi) GetIndex(args ArgsId) (Note, int) {
-	noteList := f.GetList()
-	item, itemId := cmhp.SliceFindR(noteList, func(i interface{}) bool {
-		return i.(Note).Id == args.Id
-	})
-
-	if itemId == -1 {
+func (r NoteApi) GetIndex(args ArgsId) Note {
+	// Get file with product
+	var item Note
+	err := cmhp.FileReadAsJSON(DataDir+"/note/"+args.Id+".json", &item)
+	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Note not found!")
 	}
-	return item.(Note), itemId
+	return item
 }
 
 // Get list of all notes
-func (f NoteApi) GetList() []Note {
-	var noteList []Note
-	docdb.Get(DataDir, "note", &noteList)
-	sort.SliceStable(noteList, func(i, j int) bool {
-		return noteList[i].Created.Unix() > noteList[j].Created.Unix()
+func (r NoteApi) GetList() []Note {
+	files, _ := cmhp.FileList(DataDir + "/note")
+	out := make([]Note, 0)
+	for _, file := range files {
+		out = append(out, r.GetIndex(ArgsId{Id: strings.Replace(file.Name(), ".json", "", 1)}))
+	}
+	sort.SliceStable(out, func(i, j int) bool {
+		return out[i].Created.Unix() > out[j].Created.Unix()
 	})
-	return noteList
+	return out
 }
 
 // Create new note
-func (f NoteApi) PostIndex(args NoteApi_PostIndexArgs) {
-	var noteList = f.GetList()
-	noteList = append(noteList, Note{
-		Id:          xid.New().String(),
-		Description: args.Description,
-		Created:     time.Now(),
-	})
-	docdb.Save(DataDir, "note", &noteList)
+func (r NoteApi) PostIndex(args Note) {
+	args.Id = cmhp.UID(10)
+	args.Created = time.Now()
+	cmhp.FileWriteAsJSON(DataDir+"/note/"+args.Id+".json", &args)
 }
 
 // Update note
-func (f NoteApi) PatchIndex(args NoteApi_PostIndexArgs) {
-	note, noteIndex := f.GetIndex(ArgsId{Id: args.Id})
-	noteList := f.GetList()
-	note.Description = args.Description
-	noteList[noteIndex] = note
-	docdb.Save(DataDir, "note", &noteList)
+func (r NoteApi) PatchIndex(args Note) {
+	cmhp.FileWriteAsJSON(DataDir+"/note/"+args.Id+".json", &args)
 }
 
-func (f NoteApi) DeleteIndex(args ArgsId) {
-	noteList := f.GetList()
-	out := cmhp.SliceFilterR(noteList, func(i interface{}) bool {
-		return i.(Note).Id != args.Id
-	})
-	docdb.Save(DataDir, "note", &out)
+// Delete note
+func (r NoteApi) DeleteIndex(args ArgsId) {
+	cmhp.FileDelete(DataDir + "/note/" + args.Id + ".json")
 }

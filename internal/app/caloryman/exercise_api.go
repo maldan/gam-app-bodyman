@@ -4,50 +4,41 @@ import (
 	"strings"
 
 	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
 )
 
 type ExerciseApi struct {
 	Table string
 }
 
-func (f ExerciseApi) GetIndexSafe(args ArgsId) (Exercise, int) {
-	// Find training
-	list := f.GetList()
-	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
-		return i.(Exercise).Id == args.Id
-	})
-
-	if itemId == -1 {
-		return Exercise{}, -1
-	}
-
-	return item.(Exercise), itemId
+// Get exercise by id without error
+func (r ExerciseApi) GetSafeIndex(args ArgsId) Exercise {
+	var item Exercise
+	cmhp.FileReadAsJSON(DataDir+"/exercise/"+args.Id+".json", &item)
+	return item
 }
 
-func (f ExerciseApi) GetIndex(args ArgsId) (Exercise, int) {
-	// Find training
-	list := f.GetList()
-	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
-		return i.(Exercise).Id == args.Id
-	})
-
-	// Not found
-	if itemId == -1 {
+// Get exercise by id
+func (r ExerciseApi) GetIndex(args ArgsId) Exercise {
+	var item Exercise
+	err := cmhp.FileReadAsJSON(DataDir+"/exercise/"+args.Id+".json", &item)
+	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
 	}
-
-	return item.(Exercise), itemId
+	return item
 }
 
-func (f ExerciseApi) GetList() []Exercise {
-	var list []Exercise
-	docdb.Get(DataDir, f.Table, &list)
-	return list
+// Get list of all exercises
+func (r ExerciseApi) GetList() []Exercise {
+	files, _ := cmhp.FileList(DataDir + "/exercise")
+	out := make([]Exercise, 0)
+	for _, file := range files {
+		out = append(out, r.GetIndex(ArgsId{Id: strings.Replace(file.Name(), ".json", "", 1)}))
+	}
+	return out
 }
 
+// Get exercise by name
 func (f ExerciseApi) GetByName(args ArgsName) Exercise {
 	var list = f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -59,31 +50,18 @@ func (f ExerciseApi) GetByName(args ArgsName) Exercise {
 	return item.(Exercise)
 }
 
+// Add new exercise
 func (f ExerciseApi) PostIndex(args Exercise) {
-	list := f.GetList()
-	args.Id = xid.New().String()
-	if args.MuscleList == nil {
-		args.MuscleList = make([]string, 0)
-	}
-	list = append(list, args)
-	docdb.Save(DataDir, f.Table, &list)
+	args.Id = cmhp.UID(10)
+	cmhp.FileWriteAsJSON(DataDir+"/exercise/"+args.Id+".json", &args)
 }
 
+// Update exercise
 func (f ExerciseApi) PatchIndex(args Exercise) {
-	if args.MuscleList == nil {
-		args.MuscleList = make([]string, 0)
-	}
-
-	_, trainingId := f.GetIndex(ArgsId{Id: args.Id})
-	list := f.GetList()
-	list[trainingId] = args
-	docdb.Save(DataDir, f.Table, &list)
+	cmhp.FileWriteAsJSON(DataDir+"/exercise/"+args.Id+".json", &args)
 }
 
+// Delete exercise
 func (f ExerciseApi) DeleteIndex(args ArgsId) {
-	list := f.GetList()
-	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
-		return i.(Exercise).Id != args.Id
-	})
-	docdb.Save(DataDir, f.Table, &out)
+	cmhp.FileDelete(DataDir + "/exercise/" + args.Id + ".json")
 }
