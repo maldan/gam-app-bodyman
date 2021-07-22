@@ -9,7 +9,9 @@ import (
 	"github.com/rs/xid"
 )
 
-type ProductApi int
+type ProductApi struct {
+	File string
+}
 
 type ProductApi_PostIndexArgs struct {
 	Id           string
@@ -30,7 +32,7 @@ func (f ProductApi) GetIndex(args IdArgs) (Product, int) {
 		return i.(Product).Id == args.Id
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Product not found!")
 	}
 	return item.(Product), itemId
 }
@@ -47,7 +49,7 @@ func (f ProductApi) GetByName(args NameArgs) Product {
 		return strings.Contains(strings.ToLower(i.(Product).Name), strings.ToLower(args.Name))
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Product not found!")
 	}
 	return product.(Product)
 }

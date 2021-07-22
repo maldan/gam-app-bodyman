@@ -36,7 +36,7 @@ func (f ExerciseApi) GetIndex(args IdArgs) (Exercise, int) {
 
 	// Not found
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
 	}
 
 	return item.(Exercise), itemId
@@ -54,7 +54,7 @@ func (f ExerciseApi) GetByName(args NameArgs) Exercise {
 		return strings.Contains(strings.ToLower(i.(Exercise).Name), strings.ToLower(args.Name))
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
 	}
 	return item.(Exercise)
 }

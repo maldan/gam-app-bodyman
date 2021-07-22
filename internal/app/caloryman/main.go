@@ -17,6 +17,7 @@ import (
 var DataDir = "db"
 
 func Start(frontFs embed.FS) {
+	// Flags
 	var host = flag.String("host", "127.0.0.1", "Server Hostname")
 	var port = flag.Int("port", 16000, "Server Port")
 	_ = flag.Int("clientPort", 8080, "Client Port")
@@ -58,11 +59,16 @@ func Start(frontFs embed.FS) {
 
 	docdb.Start()
 
+	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.data")
+	x := cmhp.DataDecompress(d)
+	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.json", x)*/
+
+	// Rest start
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
 			"product":   new(ProductApi),
-			"eat":       new(EatApi),
+			"eat":       EatApi{File: DataDir + "/eat.json"},
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
 			"training":  TrainingApi{Table: "training"},

@@ -23,7 +23,7 @@ func (f ComponentApi) GetIndex(args IdArgs) Component {
 		return i.(Component).Id == args.Id
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Component not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Component not found!")
 	}
 	return item.(Component)
 }
@@ -54,7 +54,7 @@ func (f ComponentApi) PatchIndex(args ComponentApi_PostIndexArgs) {
 	})
 
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Component not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Component not found!")
 	}
 	componentItem := item.(Component)
 	componentItem.Name = args.Name

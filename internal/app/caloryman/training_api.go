@@ -23,7 +23,7 @@ func (f TrainingApi) GetIndex(args IdArgs) (Training, int) {
 
 	// Not found
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Training not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Training not found!")
 	}
 
 	e := ExerciseApi{Table: "exercise"}

@@ -26,7 +26,7 @@ func (f NoteApi) GetIndex(args IdArgs) (Note, int) {
 	})
 
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Note not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Note not found!")
 	}
 	return item.(Note), itemId
 }

@@ -20,7 +20,7 @@ func (f WeightApi) GetIndex(args IdArgs) (Weight, int) {
 
 	// Not found
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Weight not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Weight not found!")
 	}
 
 	return item.(Weight), itemId
