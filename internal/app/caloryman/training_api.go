@@ -9,7 +9,6 @@ import (
 )
 
 type TrainingApi struct {
-	Table string
 }
 
 // Get training by id

@@ -8,7 +8,6 @@ import (
 )
 
 type ExerciseApi struct {
-	Table string
 }
 
 // Get exercise by id without error

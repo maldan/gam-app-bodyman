@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
 	"github.com/zserge/lorca"
 )
@@ -57,8 +56,6 @@ func Start(frontFs embed.FS) {
 		})()
 	}
 
-	docdb.Start()
-
 	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.data")
 	x, _ := cmhp.DataDecompress(d)
 	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.json", x)
@@ -89,9 +86,9 @@ func Start(frontFs embed.FS) {
 			"eat":       EatApi{},
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
-			"training":  TrainingApi{Table: "training"},
-			"exercise":  ExerciseApi{Table: "exercise"},
-			"weight":    WeightApi{Table: "weight"},
+			"training":  TrainingApi{},
+			"exercise":  ExerciseApi{},
+			"weight":    WeightApi{},
 		},
 	})
 }

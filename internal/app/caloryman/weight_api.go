@@ -1,7 +1,6 @@
 package caloryman
 
 type WeightApi struct {
-	Table string
 }
 
 /*func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
