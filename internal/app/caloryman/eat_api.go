@@ -2,58 +2,51 @@ package caloryman
 
 import (
 	"fmt"
+	"sort"
 	"time"
 
 	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
 )
 
 type EatApi struct {
-	File string
-}
-
-type EatApi_PostIndexArgs struct {
-	Id        string
-	ProductId string
-	Amount    string
-	Created   time.Time
 }
 
 // Get eat by id
-func (r EatApi) GetIndex(args IdArgs) Eat {
-	// Open file
-	var list = DB_eatList()
-
-	// Search
-	for _, item := range list {
-		if item.Id == args.Id {
-			item.Product = DB_productById(item.ProductId)
-			return item
-		}
+func (r EatApi) GetIndex(args ArgsId) Eat {
+	// Get file with eat
+	var item Eat
+	err := cmhp.FileReadAsJSON(DataDir+"/eat/item/"+args.Id+".json", &item)
+	if err != nil {
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Eat not found!")
 	}
-
-	// Error
-	restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Eat not found!")
-	return Eat{}
-}
-
-// Get full eat list
-func (r EatApi) GetList() []Eat {
-	return DB_eatList()
+	// Append product
+	r1 := ProductApi{}
+	item.Product = r1.GetIndex(ArgsId{Id: item.ProductId})
+	return item
 }
 
 // Get filtered by date
-func (r EatApi) GetFilterByDate(args DateArgs) []Eat {
-	// List
-	var list = DB_eatList()
+func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
+	// Get id list
+	idList := make([]string, 0)
+	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Date, "YYYY-MM-DD")+".json", &idList)
 
 	// Out result
 	out := make([]Eat, 0)
 
+	// Product api
+	r1 := ProductApi{}
+
 	// Search
-	for _, item := range list {
+	for _, id := range idList {
+		// Get item or skip
+		var item Eat
+		err := cmhp.FileReadAsJSON(DataDir+"/eat/item/"+id+".json", &item)
+		if err != nil {
+			continue
+		}
+
 		// Not date, skip
 		if !(item.Created.Year() == args.Date.Year() &&
 			item.Created.Month() == args.Date.Month() &&
@@ -62,7 +55,7 @@ func (r EatApi) GetFilterByDate(args DateArgs) []Eat {
 		}
 
 		// Get product for eat
-		product := DB_productById(item.ProductId)
+		product := r1.GetIndex(ArgsId{Id: item.ProductId})
 		item.Product = product
 
 		// Calculate components
@@ -75,12 +68,17 @@ func (r EatApi) GetFilterByDate(args DateArgs) []Eat {
 		out = append(out, item)
 	}
 
+	// Sort by date
+	sort.SliceStable(out, func(i, j int) bool {
+		return out[j].Created.Unix() > out[i].Created.Unix()
+	})
+
 	return out
 }
 
 // Get total stat for date
-func (f EatApi) GetTotalStatByDate(args DateArgs) map[string]float64 {
-	var list = f.GetFilterByDate(DateArgs{Date: args.Date})
+func (f EatApi) GetTotalStatByDate(args ArgsDate) map[string]float64 {
+	var list = f.GetFilterByDate(ArgsDate{Date: args.Date})
 	out := map[string]float64{
 		"calory":       0,
 		"protein":      0,
@@ -104,56 +102,58 @@ func (f EatApi) GetTotalStatByDate(args DateArgs) map[string]float64 {
 }
 
 // Get year calory stat
-func (f EatApi) GetYearMap(args DateArgs) map[string]interface{} {
+func (f EatApi) GetYearMap(args ArgsDate) map[string]interface{} {
 	out := map[string]interface{}{}
 	t1 := time.Date(args.Date.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	start := time.Now()
 	for i := 0; i < 366; i++ {
 		t2 := t1.AddDate(0, 0, i)
-		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(DateArgs{Date: t2})
+		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(ArgsDate{Date: t2})
 	}
 	fmt.Println(time.Since(start))
 
 	return out
 }
 
-func (f EatApi) PostIndex(args EatApi_PostIndexArgs) {
-	var eat []Eat
-	docdb.Get(DataDir, "eat", &eat)
-	eat = append(eat, Eat{
-		Id:        xid.New().String(),
-		ProductId: args.ProductId,
-		Amount:    args.Amount,
-		Created:   args.Created,
-	})
-	docdb.Save(DataDir, "eat", &eat)
+// Add new eat
+func (f EatApi) PostIndex(args Eat) {
+	// Save to file
+	args.Id = cmhp.UID(10)
+	args.Amount = UCTo(UCFrom(args.Amount), "g")
+	cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+
+	// Get list
+	idList := make([]string, 0)
+	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Created, "YYYY-MM-DD")+".json", &idList)
+	idList = append(idList, args.Id)
+	cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Created, "YYYY-MM-DD")+".json", &idList)
 }
 
-func (f EatApi) PatchIndex(args EatApi_PostIndexArgs) {
-	var eat []Eat
-	docdb.Get(DataDir, "eat", &eat)
-	item, itemId := cmhp.SliceFindR(eat, func(i interface{}) bool {
-		return i.(Eat).Id == args.Id
-	})
+// Update eat
+func (f EatApi) PatchIndex(args Eat) {
+	args.Amount = UCTo(UCFrom(args.Amount), "g")
+	cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+}
 
-	if itemId == -1 {
-		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Eat not found!")
+// Delete eat info
+func (r EatApi) DeleteIndex(args ArgsId) {
+	item := r.GetIndex(args)
+	cmhp.FileDelete(DataDir + "/eat/item/" + item.Id + ".json")
+
+	// Get list
+	idList := make([]string, 0)
+	idListNew := make([]string, 0)
+	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &idList)
+
+	// Remove id
+	for _, id := range idList {
+		if args.Id == id {
+			continue
+		}
+		idListNew = append(idListNew, id)
 	}
-	eatItem := item.(Eat)
-	eatItem.ProductId = args.ProductId
-	eatItem.Amount = args.Amount
-	eatItem.Created = args.Created
-	eat[itemId] = eatItem
 
-	docdb.Save(DataDir, "eat", &eat)
-}
-
-func (f EatApi) DeleteIndex(args DeleteIndexArgs) {
-	var eat []Eat
-	docdb.Get(DataDir, "eat", &eat)
-	out := cmhp.SliceFilterR(eat, func(i interface{}) bool {
-		return i.(Eat).Id != args.Id
-	})
-	docdb.Save(DataDir, "eat", &out)
+	// Save
+	cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &idListNew)
 }

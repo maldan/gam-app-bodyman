@@ -59,6 +59,18 @@ func Start(frontFs embed.FS) {
 
 	docdb.Start()
 
+	/*list := DB_productList()
+	for _, item := range list {
+		cmhp.FileWriteAsJSON(DataDir+"/product/"+item.Id+".json", &item)
+
+		// fmt.Println(item)
+		//itemIdList := make([]string, 0)
+		//cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+		// cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+item.Id+".json", &item)
+		//itemIdList = append(itemIdList, item.Id)
+		//cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+	}*/
+
 	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.data")
 	x := cmhp.DataDecompress(d)
 	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.json", x)*/
@@ -67,8 +79,8 @@ func Start(frontFs embed.FS) {
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"product":   new(ProductApi),
-			"eat":       EatApi{File: DataDir + "/eat.json"},
+			"product":   ProductApi{},
+			"eat":       EatApi{},
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
 			"training":  TrainingApi{Table: "training"},

@@ -19,7 +19,7 @@ type NoteApi_PostIndexArgs struct {
 }
 
 // Get note by id
-func (f NoteApi) GetIndex(args IdArgs) (Note, int) {
+func (f NoteApi) GetIndex(args ArgsId) (Note, int) {
 	noteList := f.GetList()
 	item, itemId := cmhp.SliceFindR(noteList, func(i interface{}) bool {
 		return i.(Note).Id == args.Id
@@ -54,14 +54,14 @@ func (f NoteApi) PostIndex(args NoteApi_PostIndexArgs) {
 
 // Update note
 func (f NoteApi) PatchIndex(args NoteApi_PostIndexArgs) {
-	note, noteIndex := f.GetIndex(IdArgs{Id: args.Id})
+	note, noteIndex := f.GetIndex(ArgsId{Id: args.Id})
 	noteList := f.GetList()
 	note.Description = args.Description
 	noteList[noteIndex] = note
 	docdb.Save(DataDir, "note", &noteList)
 }
 
-func (f NoteApi) DeleteIndex(args DeleteIndexArgs) {
+func (f NoteApi) DeleteIndex(args ArgsId) {
 	noteList := f.GetList()
 	out := cmhp.SliceFilterR(noteList, func(i interface{}) bool {
 		return i.(Note).Id != args.Id

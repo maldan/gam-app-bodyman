@@ -10,6 +10,7 @@
     <div class="body" style="height: calc(100% - 22px - 15px)">
       <Eat
         @edit="(isShowEditForm = true), (eatId = $event)"
+        @delete="remove(x)"
         v-for="(x, i) in eatList"
         :key="x.id"
         :item="x"
@@ -48,6 +49,12 @@ export default defineComponent({
   methods: {
     async refresh() {
       this.eatList = await RestApi.eat.getFilterByDate(Moment(this.date).format('YYYY-MM-DD'));
+    },
+    async remove(product: any) {
+      if (confirm('Are you sure you want to delete it?')) {
+        await RestApi.eat.delete(product.id);
+        this.refresh();
+      }
     },
   },
   data: () => {

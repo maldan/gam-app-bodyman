@@ -11,7 +11,7 @@ type WeightApi struct {
 	Table string
 }
 
-func (f WeightApi) GetIndex(args IdArgs) (Weight, int) {
+func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -40,13 +40,13 @@ func (f WeightApi) PostIndex(args Weight) {
 }
 
 func (f WeightApi) PatchIndex(args Weight) {
-	_, itemId := f.GetIndex(IdArgs{Id: args.Id})
+	_, itemId := f.GetIndex(ArgsId{Id: args.Id})
 	list := f.GetList()
 	list[itemId] = args
 	docdb.Save(DataDir, f.Table, &list)
 }
 
-func (f WeightApi) DeleteIndex(args DeleteIndexArgs) {
+func (f WeightApi) DeleteIndex(args ArgsId) {
 	list := f.GetList()
 	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
 		return i.(Weight).Id != args.Id

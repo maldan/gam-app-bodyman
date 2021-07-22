@@ -14,7 +14,7 @@ type TrainingApi struct {
 	Table string
 }
 
-func (f TrainingApi) GetIndex(args IdArgs) (Training, int) {
+func (f TrainingApi) GetIndex(args ArgsId) (Training, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -28,7 +28,7 @@ func (f TrainingApi) GetIndex(args IdArgs) (Training, int) {
 
 	e := ExerciseApi{Table: "exercise"}
 	itemOut := item.(Training)
-	itemOut.Exercise, _ = e.GetIndexSafe(IdArgs{Id: item.(Training).ExerciseId})
+	itemOut.Exercise, _ = e.GetIndexSafe(ArgsId{Id: item.(Training).ExerciseId})
 
 	return itemOut, itemId
 }
@@ -39,7 +39,7 @@ func (f TrainingApi) GetList() []Training {
 	return training
 }
 
-func (f TrainingApi) GetFilterByDate(args DateArgs) []interface{} {
+func (f TrainingApi) GetFilterByDate(args ArgsDate) []interface{} {
 	var list = f.GetList()
 	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
 		return i.(Training).Created.Format("2006-01-02") == args.Date.Format("2006-01-02")
@@ -51,15 +51,15 @@ func (f TrainingApi) GetFilterByDate(args DateArgs) []interface{} {
 	e := ExerciseApi{Table: "exercise"}
 	for itemId, item := range out {
 		training := item.(Training)
-		training.Exercise, _ = e.GetIndexSafe(IdArgs{Id: item.(Training).ExerciseId})
+		training.Exercise, _ = e.GetIndexSafe(ArgsId{Id: item.(Training).ExerciseId})
 		out[itemId] = training
 	}
 
 	return out
 }
 
-func (f TrainingApi) GetTotalStatByDate(args DateArgs) map[string]map[string]float64 {
-	list := f.GetFilterByDate(DateArgs{Date: args.Date})
+func (f TrainingApi) GetTotalStatByDate(args ArgsDate) map[string]map[string]float64 {
+	list := f.GetFilterByDate(ArgsDate{Date: args.Date})
 	out := map[string]map[string]float64{
 		"tool": {
 			"own_weight":     0,
@@ -108,14 +108,14 @@ func (f TrainingApi) GetTotalStatByDate(args DateArgs) map[string]map[string]flo
 }
 
 // Get year calory stat
-func (f TrainingApi) GetYearMap(args DateArgs) map[string]interface{} {
+func (f TrainingApi) GetYearMap(args ArgsDate) map[string]interface{} {
 	out := map[string]interface{}{}
 
 	t1 := time.Date(args.Date.Year(), time.January, 1, 0, 0, 0, 0, time.UTC)
 
 	for i := 0; i < 366; i++ {
 		t2 := t1.AddDate(0, 0, i)
-		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(DateArgs{Date: t2})
+		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(ArgsDate{Date: t2})
 	}
 
 	return out
@@ -136,13 +136,13 @@ func (f TrainingApi) PatchIndex(args Training) {
 		args.MuscleList = make([]string, 0)
 	}*/
 
-	_, trainingId := f.GetIndex(IdArgs{Id: args.Id})
+	_, trainingId := f.GetIndex(ArgsId{Id: args.Id})
 	list := f.GetList()
 	list[trainingId] = args
 	docdb.Save(DataDir, f.Table, &list)
 }
 
-func (f TrainingApi) DeleteIndex(args DeleteIndexArgs) {
+func (f TrainingApi) DeleteIndex(args ArgsId) {
 	list := f.GetList()
 	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
 		return i.(Training).Id != args.Id

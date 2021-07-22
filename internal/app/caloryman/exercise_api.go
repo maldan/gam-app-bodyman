@@ -13,7 +13,7 @@ type ExerciseApi struct {
 	Table string
 }
 
-func (f ExerciseApi) GetIndexSafe(args IdArgs) (Exercise, int) {
+func (f ExerciseApi) GetIndexSafe(args ArgsId) (Exercise, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -27,7 +27,7 @@ func (f ExerciseApi) GetIndexSafe(args IdArgs) (Exercise, int) {
 	return item.(Exercise), itemId
 }
 
-func (f ExerciseApi) GetIndex(args IdArgs) (Exercise, int) {
+func (f ExerciseApi) GetIndex(args ArgsId) (Exercise, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -48,7 +48,7 @@ func (f ExerciseApi) GetList() []Exercise {
 	return list
 }
 
-func (f ExerciseApi) GetByName(args NameArgs) Exercise {
+func (f ExerciseApi) GetByName(args ArgsName) Exercise {
 	var list = f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
 		return strings.Contains(strings.ToLower(i.(Exercise).Name), strings.ToLower(args.Name))
@@ -74,13 +74,13 @@ func (f ExerciseApi) PatchIndex(args Exercise) {
 		args.MuscleList = make([]string, 0)
 	}
 
-	_, trainingId := f.GetIndex(IdArgs{Id: args.Id})
+	_, trainingId := f.GetIndex(ArgsId{Id: args.Id})
 	list := f.GetList()
 	list[trainingId] = args
 	docdb.Save(DataDir, f.Table, &list)
 }
 
-func (f ExerciseApi) DeleteIndex(args DeleteIndexArgs) {
+func (f ExerciseApi) DeleteIndex(args ArgsId) {
 	list := f.GetList()
 	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
 		return i.(Exercise).Id != args.Id
