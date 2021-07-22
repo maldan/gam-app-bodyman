@@ -1,7 +1,12 @@
 <template>
   <div :class="$style.container">
     <div :class="$style.window">
-      <TextArea placeholder="Description..." style="margin-bottom: 10px" v-model="description" />
+      <TextArea
+        placeholder="Description..."
+        style="margin-bottom: 10px"
+        v-model="note.description"
+      />
+      <Input v-model="note.created" />
 
       <div style="display: flex">
         <Button @click="$emit('close')" text="Cancel" style="margin-right: 5px" />
@@ -16,25 +21,29 @@ import { defineComponent } from 'vue';
 import { RestApi } from '../../util/RestApi';
 import Button from '../Button.vue';
 import TextArea from '../TextArea.vue';
+import Input from '../Input.vue';
 
 export default defineComponent({
   props: {
     id: String,
   },
-  components: { Button, TextArea },
+  components: { Button, TextArea, Input },
   async mounted() {
-    const note = await RestApi.note.get(this.id + '');
-    this.description = note.description;
+    this.note = await RestApi.note.get(this.id + '');
+    console.log(this.note);
   },
   methods: {
     async submit() {
-      await RestApi.note.update(this.id + '', this.description);
+      await RestApi.note.update(this.note);
       this.$emit('close');
     },
   },
   data() {
     return {
-      description: '',
+      note: {
+        description: '',
+        created: '',
+      },
     };
   },
 });

@@ -1,12 +1,5 @@
 package caloryman
 
-import (
-	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
-	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
-)
-
 type ComponentApi int
 
 type ComponentApi_PostIndexArgs struct {
@@ -16,14 +9,14 @@ type ComponentApi_PostIndexArgs struct {
 	Description string
 }
 
-func (f ComponentApi) GetIndex(args IdArgs) Component {
+/*func (f ComponentApi) GetIndex(args ArgsId) Component {
 	var component []Component
 	docdb.Get(DataDir, "component", &component)
 	item, itemId := cmhp.SliceFindR(component, func(i interface{}) bool {
 		return i.(Component).Id == args.Id
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Component not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Component not found!")
 	}
 	return item.(Component)
 }
@@ -54,7 +47,7 @@ func (f ComponentApi) PatchIndex(args ComponentApi_PostIndexArgs) {
 	})
 
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Component not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Component not found!")
 	}
 	componentItem := item.(Component)
 	componentItem.Name = args.Name
@@ -65,11 +58,11 @@ func (f ComponentApi) PatchIndex(args ComponentApi_PostIndexArgs) {
 	docdb.Save(DataDir, "component", &component)
 }
 
-func (f ComponentApi) DeleteIndex(args DeleteIndexArgs) {
+func (f ComponentApi) DeleteIndex(args ArgsId) {
 	var component []Component
 	docdb.Get(DataDir, "component", &component)
 	out := cmhp.SliceFilterR(component, func(i interface{}) bool {
 		return i.(Component).Id != args.Id
 	})
 	docdb.Save(DataDir, "component", &out)
-}
+}*/

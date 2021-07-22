@@ -87,6 +87,9 @@ export const RestApi = {
     async get(id: string) {
       return (await Axios.get(`${API_URL}/eat?id=${id}`)).data.response;
     },
+    async delete(id: string) {
+      return (await Axios.delete(`${API_URL}/eat?id=${id}`)).data.response;
+    },
     async add(productId: string, amount: string, created: string) {
       return (
         await Axios.post(`${API_URL}/eat`, {
@@ -142,13 +145,8 @@ export const RestApi = {
     async get(id: string) {
       return (await Axios.get(`${API_URL}/note?id=${id}`)).data.response;
     },
-    async update(id: string, description: string) {
-      return (
-        await Axios.patch(`${API_URL}/note`, {
-          id,
-          description,
-        })
-      ).data.response;
+    async update(note: any) {
+      return (await Axios.patch(`${API_URL}/note`, note)).data.response;
     },
     async add(description: string) {
       return (

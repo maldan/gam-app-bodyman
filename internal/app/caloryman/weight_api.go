@@ -1,17 +1,9 @@
 package caloryman
 
-import (
-	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
-	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
-)
-
 type WeightApi struct {
-	Table string
 }
 
-func (f WeightApi) GetIndex(args IdArgs) (Weight, int) {
+/*func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
 	// Find training
 	list := f.GetList()
 	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
@@ -20,7 +12,7 @@ func (f WeightApi) GetIndex(args IdArgs) (Weight, int) {
 
 	// Not found
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Weight not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Weight not found!")
 	}
 
 	return item.(Weight), itemId
@@ -40,16 +32,16 @@ func (f WeightApi) PostIndex(args Weight) {
 }
 
 func (f WeightApi) PatchIndex(args Weight) {
-	_, itemId := f.GetIndex(IdArgs{Id: args.Id})
+	_, itemId := f.GetIndex(ArgsId{Id: args.Id})
 	list := f.GetList()
 	list[itemId] = args
 	docdb.Save(DataDir, f.Table, &list)
 }
 
-func (f WeightApi) DeleteIndex(args DeleteIndexArgs) {
+func (f WeightApi) DeleteIndex(args ArgsId) {
 	list := f.GetList()
 	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
 		return i.(Weight).Id != args.Id
 	})
 	docdb.Save(DataDir, f.Table, &out)
-}
+}*/

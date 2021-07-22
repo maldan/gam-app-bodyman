@@ -64,14 +64,14 @@ type Weight struct {
 	Created time.Time `json:"created"`
 }
 
-type IdArgs struct {
+type ArgsId struct {
 	Id string
 }
 
-type DateArgs struct {
+type ArgsDate struct {
 	Date time.Time
 }
 
-type NameArgs struct {
+type ArgsName struct {
 	Name string
 }

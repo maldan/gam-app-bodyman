@@ -4,82 +4,72 @@ import (
 	"strings"
 
 	"github.com/maldan/go-cmhp"
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
-	"github.com/rs/xid"
 )
 
-type ProductApi int
-
-type ProductApi_PostIndexArgs struct {
-	Id           string
-	Name         string
-	Fat          string
-	Protein      string
-	Carbohydrate string
+type ProductApi struct {
 }
 
-type DeleteIndexArgs struct {
-	Id string
+// Get product without error
+func (r ProductApi) GetSafeIndex(args ArgsId) Product {
+	// Get file with product
+	var item Product
+	cmhp.FileReadAsJSON(DataDir+"/product/"+args.Id+".json", &item)
+	return item
 }
 
-func (f ProductApi) GetIndex(args IdArgs) (Product, int) {
-	var product []Product
-	docdb.Get(DataDir, "product", &product)
-	item, itemId := cmhp.SliceFindR(product, func(i interface{}) bool {
-		return i.(Product).Id == args.Id
-	})
-	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
+// Get product
+func (r ProductApi) GetIndex(args ArgsId) Product {
+	// Get file with product
+	var item Product
+	err := cmhp.FileReadAsJSON(DataDir+"/product/"+args.Id+".json", &item)
+	if err != nil {
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Product not found!")
 	}
-	return item.(Product), itemId
+	return item
 }
 
-func (f ProductApi) GetList() []Product {
-	var product []Product
-	docdb.Get(DataDir, "product", &product)
-	return product
+// Get product list
+func (r ProductApi) GetList() []Product {
+	files, _ := cmhp.FileList(DataDir + "/product")
+	out := make([]Product, 0)
+	for _, file := range files {
+		out = append(out, r.GetIndex(ArgsId{Id: strings.Replace(file.Name(), ".json", "", 1)}))
+	}
+	return out
 }
 
-func (f ProductApi) GetByName(args NameArgs) Product {
-	var productList = f.GetList()
+// Get product by name
+func (r ProductApi) GetByName(args ArgsName) Product {
+	var productList = r.GetList()
 	product, itemId := cmhp.SliceFindR(productList, func(i interface{}) bool {
 		return strings.Contains(strings.ToLower(i.(Product).Name), strings.ToLower(args.Name))
 	})
 	if itemId == -1 {
-		restserver.Error(500, restserver.ErrorType.NotFound, "id", "Product not found!")
+		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Product not found!")
 	}
 	return product.(Product)
 }
 
-func (f ProductApi) PostIndex(args ProductApi_PostIndexArgs) {
-	var productList = f.GetList()
-	productList = append(productList, Product{
-		Id:              xid.New().String(),
-		Name:            args.Name,
-		Protein:         args.Protein,
-		Fat:             args.Fat,
-		Carbohydrate:    args.Carbohydrate,
-		ComponentIdList: make([]string, 0),
-	})
-	docdb.Save(DataDir, "product", &productList)
+// Add new product
+func (r ProductApi) PostIndex(args Product) {
+	args.Id = cmhp.UID(10)
+	args.Protein = UCTo(UCFrom(args.Protein), "g")
+	args.Fat = UCTo(UCFrom(args.Fat), "g")
+	args.Carbohydrate = UCTo(UCFrom(args.Carbohydrate), "g")
+	args.ComponentIdList = make([]string, 0)
+	cmhp.FileWriteAsJSON(DataDir+"/product/"+args.Id+".json", &args)
 }
 
-func (f ProductApi) PatchIndex(args ProductApi_PostIndexArgs) {
-	product, productId := f.GetIndex(IdArgs{Id: args.Id})
-	productList := f.GetList()
-	product.Name = args.Name
-	product.Protein = args.Protein
-	product.Carbohydrate = args.Carbohydrate
-	product.Fat = args.Fat
-	productList[productId] = product
-	docdb.Save(DataDir, "product", &productList)
+// Update product
+func (r ProductApi) PatchIndex(args Product) {
+	args.Protein = UCTo(UCFrom(args.Protein), "g")
+	args.Fat = UCTo(UCFrom(args.Fat), "g")
+	args.Carbohydrate = UCTo(UCFrom(args.Carbohydrate), "g")
+	cmhp.FileWriteAsJSON(DataDir+"/product/"+args.Id+".json", &args)
 }
 
-func (f ProductApi) DeleteIndex(args DeleteIndexArgs) {
-	var productList = f.GetList()
-	out := cmhp.SliceFilterR(productList, func(i interface{}) bool {
-		return i.(Product).Id != args.Id
-	})
-	docdb.Save(DataDir, "product", &out)
+// Delete product
+func (r ProductApi) DeleteIndex(args ArgsId) {
+	cmhp.FileDelete(DataDir + "/product/" + args.Id + ".json")
 }

@@ -6,7 +6,7 @@
       @click="isShowAddForm = !isShowAddForm"
       text="Add"
       icon="add"
-      style="flex: 1; margin-top: 10px"
+      style="flex: 0; margin-top: 10px"
     />
 
     <List

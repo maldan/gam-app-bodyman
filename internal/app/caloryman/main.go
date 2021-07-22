@@ -9,7 +9,6 @@ import (
 	"os"
 	"strings"
 
-	"github.com/maldan/go-docdb"
 	"github.com/maldan/go-restserver"
 	"github.com/zserge/lorca"
 )
@@ -17,6 +16,7 @@ import (
 var DataDir = "db"
 
 func Start(frontFs embed.FS) {
+	// Flags
 	var host = flag.String("host", "127.0.0.1", "Server Hostname")
 	var port = flag.Int("port", 16000, "Server Port")
 	_ = flag.Int("clientPort", 8080, "Client Port")
@@ -56,18 +56,39 @@ func Start(frontFs embed.FS) {
 		})()
 	}
 
-	docdb.Start()
+	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.data")
+	x, _ := cmhp.DataDecompress(d)
+	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/exercise.json", x)
 
+	var list []Exercise
+	cmhp.FileReadAsJSON(DataDir+"/exercise.json", &list)
+
+	for _, item := range list {
+		cmhp.FileWriteAsJSON(DataDir+"/exercise/"+item.Id+".json", &item)
+
+		// fmt.Println(item)
+		//itemIdList := make([]string, 0)
+		//cmhp.FileReadAsJSON(DataDir+"/training/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+		// cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+item.Id+".json", &item)
+		//itemIdList = append(itemIdList, item.Id)
+		//cmhp.FileWriteAsJSON(DataDir+"/training/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &itemIdList)
+	}*/
+
+	/*d, _ := cmhp.FileReadAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.data")
+	x := cmhp.DataDecompress(d)
+	cmhp.FileWriteAsBin("C:/Users/black/.gam-data/maldan-gam-app-caloryman/weight.json", x)*/
+
+	// Rest start
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
 		"/api": map[string]interface{}{
-			"product":   new(ProductApi),
-			"eat":       new(EatApi),
+			"product":   ProductApi{},
+			"eat":       EatApi{},
 			"component": new(ComponentApi),
 			"note":      new(NoteApi),
-			"training":  TrainingApi{Table: "training"},
-			"exercise":  ExerciseApi{Table: "exercise"},
-			"weight":    WeightApi{Table: "weight"},
+			"training":  TrainingApi{},
+			"exercise":  ExerciseApi{},
+			"weight":    WeightApi{},
 		},
 	})
 }
