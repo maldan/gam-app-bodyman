@@ -12,9 +12,7 @@
         <img @click="remove(note.id)" class="clickable" src="../../asset/trash.svg" alt="" />
         <div :class="$style.right">{{ $root.moment(note.created).fromNow() }}</div>
       </div>
-      <div :class="$style.body">
-        {{ note.description }}
-      </div>
+      <div :class="$style.body" v-html="note.description.replace(/\n/g, '<br>')"></div>
     </div>
   </div>
 </template>

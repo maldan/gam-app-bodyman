@@ -20,7 +20,7 @@
             ]"
             :style="{ background: getPower(map[$root.moment(z).format('YYYY-MM-DD')]?.calory) }"
             v-for="z in days[i]"
-            :key="z"
+            :key="x + z"
             :title="map[$root.moment(z).format('YYYY-MM-DD')]?.calory"
           ></div>
         </div>
@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { RestApi } from '../util/RestApi';
+import { RestApi } from '../../util/RestApi';
 import Moment from 'moment';
 
 export default defineComponent({
@@ -46,11 +46,13 @@ export default defineComponent({
     for (let i = 0; i < 12; i++) {
       const l = this.getDates(i);
       const ll = [];
+      console.log(l.length);
       for (let j = 0; j < l[0].getDay() - 1; j++) {
         ll.push(null);
       }
       this.days[i] = [...ll, ...l];
     }
+    console.log(this.days);
 
     this.getYearMap();
   },
@@ -66,27 +68,21 @@ export default defineComponent({
     async getYearMap() {
       this.map = await RestApi.eat.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
     },
-    getDates(month: number) {
-      const cFrom = new Date();
-      const cTo = new Date();
-
-      cFrom.setMonth(month);
-      cTo.setMonth(month);
-      cFrom.setDate(1);
-      cTo.setDate(31);
-
-      let daysArr = [new Date(cFrom)];
-      let tempDate = cFrom;
-
-      while (tempDate < cTo) {
-        tempDate.setUTCDate(tempDate.getUTCDate() + 1);
-        if (tempDate.getMonth() != month) {
+    getDates(month: number): Date[] {
+      const year = new Date().getFullYear();
+      const out = [];
+      for (let i = 0; i < 32; i++) {
+        const cFrom = new Date(`${year}-${month + 1}-${i} 00:00:00`);
+        if (cFrom.toString() === 'Invalid Date') {
+          continue;
+        }
+        if (cFrom.getMonth() !== month) {
           break;
         }
-        daysArr.push(new Date(tempDate));
-      }
 
-      return daysArr;
+        out.push(cFrom);
+      }
+      return out;
     },
   },
   data: () => {

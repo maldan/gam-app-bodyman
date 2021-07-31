@@ -71,26 +71,20 @@ export default defineComponent({
       this.map = await RestApi.training.getYearMap(Moment(this.date).format('YYYY-MM-DD'));
     },
     getDates(month: number) {
-      const cFrom = new Date();
-      const cTo = new Date();
-
-      cFrom.setMonth(month);
-      cTo.setMonth(month);
-      cFrom.setDate(1);
-      cTo.setDate(31);
-
-      let daysArr = [new Date(cFrom)];
-      let tempDate = cFrom;
-
-      while (tempDate < cTo) {
-        tempDate.setUTCDate(tempDate.getUTCDate() + 1);
-        if (tempDate.getMonth() != month) {
+      const year = new Date().getFullYear();
+      const out = [];
+      for (let i = 0; i < 32; i++) {
+        const cFrom = new Date(`${year}-${month + 1}-${i} 00:00:00`);
+        if (cFrom.toString() === 'Invalid Date') {
+          continue;
+        }
+        if (cFrom.getMonth() !== month) {
           break;
         }
-        daysArr.push(new Date(tempDate));
-      }
 
-      return daysArr;
+        out.push(cFrom);
+      }
+      return out;
     },
   },
   data: () => {

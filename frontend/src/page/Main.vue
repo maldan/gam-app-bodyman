@@ -58,7 +58,7 @@
 import { defineComponent } from 'vue';
 import { RestApi } from '../util/RestApi';
 import Eat from '../component/eat/Eat.vue';
-import Schedule from '../component/Schedule.vue';
+import Schedule from '../component/eat/Schedule.vue';
 import Header from '../component/Header.vue';
 import EatHistory from '../component/eat/History.vue';
 import Moment from 'moment';
@@ -74,7 +74,7 @@ export default defineComponent({
       this.stat = await RestApi.eat.getTotalStatByDate(
         Moment(this.currentDate).format('YYYY-MM-DD'),
       );
-      (this.$refs['note_list'] as any).refresh();
+      // (this.$refs['note_list'] as any).refresh();
     },
   },
   data: () => {
