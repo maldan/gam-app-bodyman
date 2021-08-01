@@ -46,13 +46,15 @@ export default defineComponent({
     for (let i = 0; i < 12; i++) {
       const l = this.getDates(i);
       const ll = [];
-      console.log(l.length);
-      for (let j = 0; j < l[0].getDay() - 1; j++) {
+      let dd = l[0].getDay() - 1;
+      if (dd < 0) {
+        dd = 6;
+      }
+      for (let j = 0; j < dd; j++) {
         ll.push(null);
       }
       this.days[i] = [...ll, ...l];
     }
-    console.log(this.days);
 
     this.getYearMap();
   },
@@ -71,8 +73,10 @@ export default defineComponent({
     getDates(month: number): Date[] {
       const year = new Date().getFullYear();
       const out = [];
-      for (let i = 0; i < 32; i++) {
-        const cFrom = new Date(`${year}-${month + 1}-${i} 00:00:00`);
+      for (let i = 1; i <= 32; i++) {
+        const cFrom = new Date(
+          `${year}-${('00' + (month + 1)).slice(-2)}-${('00' + i).slice(-2)}T00:00:00.000+00:00`,
+        );
         if (cFrom.toString() === 'Invalid Date') {
           continue;
         }
