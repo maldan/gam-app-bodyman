@@ -1,10 +1,8 @@
 package caloryman
 
-import "github.com/maldan/go-cmhp"
-
 var productListCache = make([]Product, 0)
 
-func DB_eatList() []Eat {
+/*func DB_eatList() []Eat {
 	var list []Eat
 	cmhp.FileReadAsJSON(DataDir+"/eat.json", &list)
 	return list
@@ -29,4 +27,4 @@ func DB_productById(id string) Product {
 		}
 	}
 	return Product{}
-}
+}*/

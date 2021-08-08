@@ -4,7 +4,9 @@ import (
 	"sort"
 	"time"
 
-	"github.com/maldan/go-cmhp"
+	"github.com/maldan/go-cmhp/cmhp_crypto"
+	"github.com/maldan/go-cmhp/cmhp_file"
+	"github.com/maldan/go-cmhp/cmhp_time"
 	"github.com/maldan/go-restserver"
 )
 
@@ -15,7 +17,7 @@ type EatApi struct {
 func (r EatApi) GetIndex(args ArgsId) Eat {
 	// Get file with eat
 	var item Eat
-	err := cmhp.FileReadAsJSON(DataDir+"/eat/item/"+args.Id+".json", &item)
+	err := cmhp_file.ReadJSON(DataDir+"/eat/item/"+args.Id+".json", &item)
 	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Eat not found!")
 	}
@@ -29,7 +31,7 @@ func (r EatApi) GetIndex(args ArgsId) Eat {
 func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 	// Get id list
 	idList := make([]string, 0)
-	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Date, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &idList)
 
 	// Out result
 	out := make([]Eat, 0)
@@ -41,7 +43,7 @@ func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 	for _, id := range idList {
 		// Get item or skip
 		var item Eat
-		err := cmhp.FileReadAsJSON(DataDir+"/eat/item/"+id+".json", &item)
+		err := cmhp_file.ReadJSON(DataDir+"/eat/item/"+id+".json", &item)
 		if err != nil {
 			continue
 		}
@@ -100,7 +102,7 @@ func (f EatApi) GetYearMap(args ArgsDate) map[string]interface{} {
 
 	for i := 0; i < 366; i++ {
 		t2 := t1.AddDate(0, 0, i)
-		out[cmhp.TimeFormat(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(ArgsDate{Date: t2})
+		out[cmhp_time.Format(t2, "YYYY-MM-DD")] = f.GetTotalStatByDate(ArgsDate{Date: t2})
 	}
 
 	return out
@@ -109,32 +111,32 @@ func (f EatApi) GetYearMap(args ArgsDate) map[string]interface{} {
 // Add new eat
 func (f EatApi) PostIndex(args Eat) {
 	// Save to file
-	args.Id = cmhp.UID(10)
+	args.Id = cmhp_crypto.UID(10)
 	args.Amount = UCTo(UCFrom(args.Amount), "g")
-	cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+	cmhp_file.WriteJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
 
 	// Get list
 	idList := make([]string, 0)
-	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 	idList = append(idList, args.Id)
-	cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.WriteJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 }
 
 // Update eat
 func (f EatApi) PatchIndex(args Eat) {
 	args.Amount = UCTo(UCFrom(args.Amount), "g")
-	cmhp.FileWriteAsJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+	cmhp_file.WriteJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
 }
 
 // Delete eat info
 func (r EatApi) DeleteIndex(args ArgsId) {
 	item := r.GetIndex(args)
-	cmhp.FileDelete(DataDir + "/eat/item/" + item.Id + ".json")
+	cmhp_file.Delete(DataDir + "/eat/item/" + item.Id + ".json")
 
 	// Get list
 	idList := make([]string, 0)
 	idListNew := make([]string, 0)
-	cmhp.FileReadAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idList)
 
 	// Remove id
 	for _, id := range idList {
@@ -145,5 +147,5 @@ func (r EatApi) DeleteIndex(args ArgsId) {
 	}
 
 	// Save
-	cmhp.FileWriteAsJSON(DataDir+"/eat/stat/"+cmhp.TimeFormat(item.Created, "YYYY-MM-DD")+".json", &idListNew)
+	cmhp_file.WriteJSON(DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idListNew)
 }

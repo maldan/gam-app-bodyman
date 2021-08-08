@@ -219,4 +219,31 @@ export const RestApi = {
       return (await Axios.delete(`${API_URL}/training?id=${id}`)).data.response;
     },
   },
+  weight: {
+    async getList() {
+      return (await Axios.get(`${API_URL}/weight/list`)).data.response;
+    },
+    async get(date: string) {
+      return (await Axios.get(`${API_URL}/weight?date=${date}`)).data.response;
+    },
+    async delete(date: string) {
+      return (await Axios.delete(`${API_URL}/weight?id=${date}`)).data.response;
+    },
+    async add(weight: number, created: string) {
+      return (
+        await Axios.post(`${API_URL}/weight`, {
+          weight,
+          created,
+        })
+      ).data.response;
+    },
+    async update(weight: string, created: string) {
+      return (
+        await Axios.patch(`${API_URL}/weight`, {
+          weight,
+          created,
+        })
+      ).data.response;
+    },
+  },
 };

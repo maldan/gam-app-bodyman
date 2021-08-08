@@ -1,47 +1,50 @@
 package caloryman
 
+import (
+	"strings"
+	"time"
+
+	"github.com/maldan/go-cmhp/cmhp_file"
+	"github.com/maldan/go-cmhp/cmhp_time"
+	"github.com/maldan/go-restserver"
+)
+
 type WeightApi struct {
 }
 
-/*func (f WeightApi) GetIndex(args ArgsId) (Weight, int) {
-	// Find training
-	list := f.GetList()
-	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
-		return i.(Weight).Id == args.Id
-	})
-
-	// Not found
-	if itemId == -1 {
-		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Weight not found!")
+// Get weight
+func (r WeightApi) GetIndex(args ArgsDate) Weight {
+	// Get file with weight
+	var item Weight
+	err := cmhp_file.ReadJSON(DataDir+"/weight/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &item)
+	if err != nil {
+		restserver.Fatal(404, restserver.ErrorType.NotFound, "id", "Weight not found!")
 	}
-
-	return item.(Weight), itemId
+	return item
 }
 
-func (f WeightApi) GetList() []Weight {
-	var list []Weight
-	docdb.Get(DataDir, f.Table, &list)
-	return list
+// Get product list
+func (r WeightApi) GetList() []Weight {
+	files, _ := cmhp_file.List(DataDir + "/weight")
+	out := make([]Weight, 0)
+	for _, file := range files {
+		date, _ := time.Parse("2006-01-02", strings.Replace(file.Name(), ".json", "", 1))
+		out = append(out, r.GetIndex(ArgsDate{Date: date}))
+	}
+	return out
 }
 
-func (f WeightApi) PostIndex(args Weight) {
-	list := f.GetList()
-	args.Id = xid.New().String()
-	list = append(list, args)
-	docdb.Save(DataDir, f.Table, &list)
+// Add new weight
+func (r WeightApi) PostIndex(args Weight) {
+	cmhp_file.WriteJSON(DataDir+"/weight/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &args)
 }
 
-func (f WeightApi) PatchIndex(args Weight) {
-	_, itemId := f.GetIndex(ArgsId{Id: args.Id})
-	list := f.GetList()
-	list[itemId] = args
-	docdb.Save(DataDir, f.Table, &list)
+// Update product
+func (r WeightApi) PatchIndex(args Weight) {
+	cmhp_file.WriteJSON(DataDir+"/weight/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &args)
 }
 
-func (f WeightApi) DeleteIndex(args ArgsId) {
-	list := f.GetList()
-	out := cmhp.SliceFilterR(list, func(i interface{}) bool {
-		return i.(Weight).Id != args.Id
-	})
-	docdb.Save(DataDir, f.Table, &out)
-}*/
+// Delete product
+func (r WeightApi) DeleteIndex(args ArgsDate) {
+	cmhp_file.Delete(DataDir + "/weight/" + cmhp_time.Format(args.Date, "YYYY-MM-DD") + ".json")
+}

@@ -59,8 +59,7 @@ type Note struct {
 }
 
 type Weight struct {
-	Id      string    `json:"id"`
-	Value   float32   `json:"value"`
+	Weight  float64   `json:"weight"`
 	Created time.Time `json:"created"`
 }
 

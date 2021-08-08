@@ -49,6 +49,9 @@
             <Schedule @select="(currentDate = $event), refresh()" />
           </div>
         </div>
+
+        <!-- Schedule -->
+        <Weight :date="currentDate" style="margin-top: 10px" />
       </div>
     </div>
   </div>
@@ -61,10 +64,11 @@ import Eat from '../component/eat/Eat.vue';
 import Schedule from '../component/eat/Schedule.vue';
 import Header from '../component/Header.vue';
 import EatHistory from '../component/eat/History.vue';
+import Weight from '../component/eat/Weight.vue';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Eat, Schedule, Header, EatHistory },
+  components: { Eat, Schedule, Header, EatHistory, Weight },
   async mounted() {
     this.refresh();
   },

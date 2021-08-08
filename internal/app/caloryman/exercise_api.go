@@ -3,7 +3,9 @@ package caloryman
 import (
 	"strings"
 
-	"github.com/maldan/go-cmhp"
+	"github.com/maldan/go-cmhp/cmhp_crypto"
+	"github.com/maldan/go-cmhp/cmhp_file"
+	"github.com/maldan/go-cmhp/cmhp_slice"
 	"github.com/maldan/go-restserver"
 )
 
@@ -13,14 +15,14 @@ type ExerciseApi struct {
 // Get exercise by id without error
 func (r ExerciseApi) GetSafeIndex(args ArgsId) Exercise {
 	var item Exercise
-	cmhp.FileReadAsJSON(DataDir+"/exercise/"+args.Id+".json", &item)
+	cmhp_file.ReadJSON(DataDir+"/exercise/"+args.Id+".json", &item)
 	return item
 }
 
 // Get exercise by id
 func (r ExerciseApi) GetIndex(args ArgsId) Exercise {
 	var item Exercise
-	err := cmhp.FileReadAsJSON(DataDir+"/exercise/"+args.Id+".json", &item)
+	err := cmhp_file.ReadJSON(DataDir+"/exercise/"+args.Id+".json", &item)
 	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Exercise not found!")
 	}
@@ -29,7 +31,7 @@ func (r ExerciseApi) GetIndex(args ArgsId) Exercise {
 
 // Get list of all exercises
 func (r ExerciseApi) GetList() []Exercise {
-	files, _ := cmhp.FileList(DataDir + "/exercise")
+	files, _ := cmhp_file.List(DataDir + "/exercise")
 	out := make([]Exercise, 0)
 	for _, file := range files {
 		out = append(out, r.GetIndex(ArgsId{Id: strings.Replace(file.Name(), ".json", "", 1)}))
@@ -40,7 +42,7 @@ func (r ExerciseApi) GetList() []Exercise {
 // Get exercise by name
 func (f ExerciseApi) GetByName(args ArgsName) Exercise {
 	var list = f.GetList()
-	item, itemId := cmhp.SliceFindR(list, func(i interface{}) bool {
+	item, itemId := cmhp_slice.FindR(list, func(i interface{}) bool {
 		return strings.Contains(strings.ToLower(i.(Exercise).Name), strings.ToLower(args.Name))
 	})
 	if itemId == -1 {
@@ -51,16 +53,16 @@ func (f ExerciseApi) GetByName(args ArgsName) Exercise {
 
 // Add new exercise
 func (f ExerciseApi) PostIndex(args Exercise) {
-	args.Id = cmhp.UID(10)
-	cmhp.FileWriteAsJSON(DataDir+"/exercise/"+args.Id+".json", &args)
+	args.Id = cmhp_crypto.UID(10)
+	cmhp_file.WriteJSON(DataDir+"/exercise/"+args.Id+".json", &args)
 }
 
 // Update exercise
 func (f ExerciseApi) PatchIndex(args Exercise) {
-	cmhp.FileWriteAsJSON(DataDir+"/exercise/"+args.Id+".json", &args)
+	cmhp_file.WriteJSON(DataDir+"/exercise/"+args.Id+".json", &args)
 }
 
 // Delete exercise
 func (f ExerciseApi) DeleteIndex(args ArgsId) {
-	cmhp.FileDelete(DataDir + "/exercise/" + args.Id + ".json")
+	cmhp_file.Delete(DataDir + "/exercise/" + args.Id + ".json")
 }
