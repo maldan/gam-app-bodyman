@@ -1,6 +1,6 @@
 {
   "name": "@maldan/gam-app-caloryman",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Calody Manager",
   "main": "index.js",
   "scripts": {},
