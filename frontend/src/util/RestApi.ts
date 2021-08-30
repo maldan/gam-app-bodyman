@@ -246,4 +246,31 @@ export const RestApi = {
       ).data.response;
     },
   },
+  fap: {
+    async getList() {
+      return (await Axios.get(`${API_URL}/fap/list`)).data.response;
+    },
+    async get(date: string) {
+      return (await Axios.get(`${API_URL}/fap?date=${date}`)).data.response;
+    },
+    async delete(date: string) {
+      return (await Axios.delete(`${API_URL}/fap?id=${date}`)).data.response;
+    },
+    async add(amount: number, created: string) {
+      return (
+        await Axios.post(`${API_URL}/fap`, {
+          amount,
+          created,
+        })
+      ).data.response;
+    },
+    async update(amount: string, created: string) {
+      return (
+        await Axios.patch(`${API_URL}/fap`, {
+          amount,
+          created,
+        })
+      ).data.response;
+    },
+  },
 };

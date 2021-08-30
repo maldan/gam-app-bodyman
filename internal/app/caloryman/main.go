@@ -44,6 +44,19 @@ func Start(frontFs embed.FS) {
 		io.Copy(destination, source)
 	}
 
+	/*m := make([]struct {
+		Created time.Time `json:"created"`
+	}, 0)
+	cmhp_file.ReadJSON("./fap.json", &m)
+	fff := FapApi{}
+	for _, xx := range m {
+		loc, _ := time.LoadLocation("Europe/Moscow")
+		fff.PostIndex(Fap{
+			Amount:  1,
+			Created: xx.Created.In(loc),
+		})
+	}*/
+
 	// Rest start
 	restserver.Start(fmt.Sprintf("%s:%d", *host, *port), map[string]interface{}{
 		"/": restserver.VirtualFs{Root: "frontend/build/", Fs: frontFs},
@@ -55,6 +68,7 @@ func Start(frontFs embed.FS) {
 			"training":  TrainingApi{},
 			"exercise":  ExerciseApi{},
 			"weight":    WeightApi{},
+			"fap":       FapApi{},
 		},
 	})
 }

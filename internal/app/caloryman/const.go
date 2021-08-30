@@ -63,6 +63,11 @@ type Weight struct {
 	Created time.Time `json:"created"`
 }
 
+type Fap struct {
+	Amount  int       `json:"amount"`
+	Created time.Time `json:"created"`
+}
+
 type ArgsId struct {
 	Id string
 }

@@ -41,6 +41,9 @@
             <Schedule :type="type" :mode="mode" @select="(currentDate = $event), refresh()" />
           </div>
         </div>
+
+        <!-- Schedule -->
+        <Fap :date="currentDate" style="margin-top: 10px" />
       </div>
     </div>
   </div>
@@ -49,13 +52,14 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import History from '../component/training/History.vue';
+import Fap from '../component/training/Fap.vue';
 import Header from '../component/Header.vue';
 import Schedule from '../component/training/Schedule.vue';
 import { RestApi } from '../util/RestApi';
 import Moment from 'moment';
 
 export default defineComponent({
-  components: { Header, History, Schedule },
+  components: { Header, History, Schedule, Fap },
   async mounted() {
     this.refresh();
   },
