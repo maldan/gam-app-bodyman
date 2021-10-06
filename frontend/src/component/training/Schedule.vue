@@ -131,10 +131,10 @@ export default defineComponent({
       color: #acacac;
 
       .cell {
-        width: 12px;
-        height: 12px;
+        width: 11px;
+        height: 11px;
         background: #2b2b2b;
-        // border: 1px solid transparent;
+        border: 1px solid transparent;
         font-size: 8px;
         display: flex;
         align-items: center;

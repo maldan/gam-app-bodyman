@@ -1,5 +1,9 @@
 <template>
   <router-view />
+
+  <ui-modal v-if="$store.state.modal.name">
+    <component :is="'modal-' + $store.state.modal.name" />
+  </ui-modal>
 </template>
 
 <script lang="ts">
