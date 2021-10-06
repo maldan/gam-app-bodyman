@@ -1,9 +1,10 @@
-package caloryman
+package api
 
 import (
 	"sort"
 	"time"
 
+	"github.com/maldan/gam-app-caloryman/internal/app/caloryman/core"
 	"github.com/maldan/go-cmhp/cmhp_crypto"
 	"github.com/maldan/go-cmhp/cmhp_file"
 	"github.com/maldan/go-cmhp/cmhp_time"
@@ -14,10 +15,10 @@ type EatApi struct {
 }
 
 // Get eat by id
-func (r EatApi) GetIndex(args ArgsId) Eat {
+func (r EatApi) GetIndex(args ArgsId) core.Eat {
 	// Get file with eat
-	var item Eat
-	err := cmhp_file.ReadJSON(DataDir+"/eat/item/"+args.Id+".json", &item)
+	var item core.Eat
+	err := cmhp_file.ReadJSON(core.DataDir+"/eat/item/"+args.Id+".json", &item)
 	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Eat not found!")
 	}
@@ -28,13 +29,13 @@ func (r EatApi) GetIndex(args ArgsId) Eat {
 }
 
 // Get filtered by date
-func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
+func (r EatApi) GetFilterByDate(args ArgsDate) []core.Eat {
 	// Get id list
 	idList := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/eat/stat/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &idList)
 
 	// Out result
-	out := make([]Eat, 0)
+	out := make([]core.Eat, 0)
 
 	// Product api
 	r1 := ProductApi{}
@@ -42,8 +43,8 @@ func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 	// Search
 	for _, id := range idList {
 		// Get item or skip
-		var item Eat
-		err := cmhp_file.ReadJSON(DataDir+"/eat/item/"+id+".json", &item)
+		var item core.Eat
+		err := cmhp_file.ReadJSON(core.DataDir+"/eat/item/"+id+".json", &item)
 		if err != nil {
 			continue
 		}
@@ -53,12 +54,12 @@ func (r EatApi) GetFilterByDate(args ArgsDate) []Eat {
 		item.Product = product
 
 		// Calculate components
-		item.Product.Protein = UCTo(UCFrom(item.Amount)/100*UCFrom(item.Product.Protein), "g")
-		item.Product.Fat = UCTo(UCFrom(item.Amount)/100*UCFrom(item.Product.Fat), "g")
-		item.Product.Carbohydrate = UCTo(UCFrom(item.Amount)/100*UCFrom(item.Product.Carbohydrate), "g")
+		item.Product.Protein = core.UCTo(core.UCFrom(item.Amount)/100*core.UCFrom(item.Product.Protein), "g")
+		item.Product.Fat = core.UCTo(core.UCFrom(item.Amount)/100*core.UCFrom(item.Product.Fat), "g")
+		item.Product.Carbohydrate = core.UCTo(core.UCFrom(item.Amount)/100*core.UCFrom(item.Product.Carbohydrate), "g")
 
 		// Calculate calory
-		item.Calory = UCFrom(item.Amount) / 100 * (UCFrom(product.Protein)*4 + UCFrom(product.Carbohydrate)*4 + UCFrom(product.Fat)*9)
+		item.Calory = core.UCFrom(item.Amount) / 100 * (core.UCFrom(product.Protein)*4 + core.UCFrom(product.Carbohydrate)*4 + core.UCFrom(product.Fat)*9)
 		out = append(out, item)
 	}
 
@@ -83,12 +84,12 @@ func (f EatApi) GetTotalStatByDate(args ArgsDate) map[string]float64 {
 
 	for i := 0; i < len(list); i++ {
 		out["calory"] += list[i].Calory
-		out["protein"] += UCFrom(list[i].Product.Protein)
-		out["carbohydrate"] += UCFrom(list[i].Product.Carbohydrate)
-		out["fat"] += UCFrom(list[i].Product.Fat)
+		out["protein"] += core.UCFrom(list[i].Product.Protein)
+		out["carbohydrate"] += core.UCFrom(list[i].Product.Carbohydrate)
+		out["fat"] += core.UCFrom(list[i].Product.Fat)
 
 		if list[i].Product.Name == "Вода" {
-			out["water"] += UCFrom(list[i].Amount)
+			out["water"] += core.UCFrom(list[i].Amount)
 		}
 	}
 
@@ -109,34 +110,34 @@ func (f EatApi) GetYearMap(args ArgsDate) map[string]interface{} {
 }
 
 // Add new eat
-func (f EatApi) PostIndex(args Eat) {
+func (f EatApi) PostIndex(args core.Eat) {
 	// Save to file
 	args.Id = cmhp_crypto.UID(10)
-	args.Amount = UCTo(UCFrom(args.Amount), "g")
-	cmhp_file.WriteJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+	args.Amount = core.UCTo(core.UCFrom(args.Amount), "g")
+	cmhp_file.WriteJSON(core.DataDir+"/eat/item/"+args.Id+".json", &args)
 
 	// Get list
 	idList := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 	idList = append(idList, args.Id)
-	cmhp_file.WriteJSON(DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.WriteJSON(core.DataDir+"/eat/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 }
 
 // Update eat
-func (f EatApi) PatchIndex(args Eat) {
-	args.Amount = UCTo(UCFrom(args.Amount), "g")
-	cmhp_file.WriteJSON(DataDir+"/eat/item/"+args.Id+".json", &args)
+func (f EatApi) PatchIndex(args core.Eat) {
+	args.Amount = core.UCTo(core.UCFrom(args.Amount), "g")
+	cmhp_file.WriteJSON(core.DataDir+"/eat/item/"+args.Id+".json", &args)
 }
 
 // Delete eat info
 func (r EatApi) DeleteIndex(args ArgsId) {
 	item := r.GetIndex(args)
-	cmhp_file.Delete(DataDir + "/eat/item/" + item.Id + ".json")
+	cmhp_file.Delete(core.DataDir + "/eat/item/" + item.Id + ".json")
 
 	// Get list
 	idList := make([]string, 0)
 	idListNew := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idList)
 
 	// Remove id
 	for _, id := range idList {
@@ -147,5 +148,5 @@ func (r EatApi) DeleteIndex(args ArgsId) {
 	}
 
 	// Save
-	cmhp_file.WriteJSON(DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idListNew)
+	cmhp_file.WriteJSON(core.DataDir+"/eat/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idListNew)
 }

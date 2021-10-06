@@ -1,4 +1,4 @@
-package caloryman
+package core
 
 import (
 	"fmt"

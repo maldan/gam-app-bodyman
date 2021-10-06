@@ -1,16 +1,17 @@
-package caloryman
+package api
 
 import (
 	"sort"
 	"strings"
 	"time"
 
+	"github.com/maldan/gam-app-caloryman/internal/app/caloryman/core"
 	"github.com/maldan/go-cmhp/cmhp_crypto"
 	"github.com/maldan/go-cmhp/cmhp_file"
 	"github.com/maldan/go-restserver"
 )
 
-type NoteApi int
+type NoteApi struct{}
 
 type NoteApi_PostIndexArgs struct {
 	Id          string
@@ -19,10 +20,10 @@ type NoteApi_PostIndexArgs struct {
 }
 
 // Get note by id
-func (r NoteApi) GetIndex(args ArgsId) Note {
+func (r NoteApi) GetIndex(args ArgsId) core.Note {
 	// Get file with product
-	var item Note
-	err := cmhp_file.ReadJSON(DataDir+"/note/"+args.Id+".json", &item)
+	var item core.Note
+	err := cmhp_file.ReadJSON(core.DataDir+"/note/"+args.Id+".json", &item)
 	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Note not found!")
 	}
@@ -30,9 +31,9 @@ func (r NoteApi) GetIndex(args ArgsId) Note {
 }
 
 // Get list of all notes
-func (r NoteApi) GetList() []Note {
-	files, _ := cmhp_file.List(DataDir + "/note")
-	out := make([]Note, 0)
+func (r NoteApi) GetList() []core.Note {
+	files, _ := cmhp_file.List(core.DataDir + "/note")
+	out := make([]core.Note, 0)
 	for _, file := range files {
 		out = append(out, r.GetIndex(ArgsId{Id: strings.Replace(file.Name(), ".json", "", 1)}))
 	}
@@ -43,18 +44,18 @@ func (r NoteApi) GetList() []Note {
 }
 
 // Create new note
-func (r NoteApi) PostIndex(args Note) {
+func (r NoteApi) PostIndex(args core.Note) {
 	args.Id = cmhp_crypto.UID(10)
 	args.Created = time.Now()
-	cmhp_file.WriteJSON(DataDir+"/note/"+args.Id+".json", &args)
+	cmhp_file.WriteJSON(core.DataDir+"/note/"+args.Id+".json", &args)
 }
 
 // Update note
-func (r NoteApi) PatchIndex(args Note) {
-	cmhp_file.WriteJSON(DataDir+"/note/"+args.Id+".json", &args)
+func (r NoteApi) PatchIndex(args core.Note) {
+	cmhp_file.WriteJSON(core.DataDir+"/note/"+args.Id+".json", &args)
 }
 
 // Delete note
 func (r NoteApi) DeleteIndex(args ArgsId) {
-	cmhp_file.Delete(DataDir + "/note/" + args.Id + ".json")
+	cmhp_file.Delete(core.DataDir + "/note/" + args.Id + ".json")
 }

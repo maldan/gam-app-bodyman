@@ -1,4 +1,4 @@
-package caloryman
+package core
 
 import "time"
 
@@ -68,14 +68,4 @@ type Fap struct {
 	Created time.Time `json:"created"`
 }
 
-type ArgsId struct {
-	Id string
-}
-
-type ArgsDate struct {
-	Date time.Time
-}
-
-type ArgsName struct {
-	Name string
-}
+var DataDir = "db"

@@ -5,6 +5,10 @@ github.com/jmespath/go-jmespath v0.4.0/go.mod h1:T8mJZnbsbmF+m6zOOFylbeCJqk5+pHW
 github.com/jmespath/go-jmespath/internal/testify v1.5.1/go.mod h1:L3OGu8Wl2/fWfCI6z80xFu9LTZmf1ZRjMHUOPmWr69U=
 github.com/maldan/go-cmhp v0.0.15 h1:wrVgaSjh04xa1dTFxdsqJRniAVZgUxbFZu3WkiM1ods=
 github.com/maldan/go-cmhp v0.0.15/go.mod h1:AJPrAVJnjTv8gglY++g5Lz8igdiySEKee64ru2Ohno8=
+github.com/maldan/go-cmhp v0.0.20 h1:h8Vj8Di2DR1PTUENkVI/+NmfjxKEKSmG477cN99gDs0=
+github.com/maldan/go-cmhp v0.0.20/go.mod h1:AJPrAVJnjTv8gglY++g5Lz8igdiySEKee64ru2Ohno8=
+github.com/maldan/go-rapi v0.0.6 h1:xLrQv03B6bdsmVOjwDU3RnODI1Enqbf4V+MH8rZn0z0=
+github.com/maldan/go-rapi v0.0.6/go.mod h1:jL732c7fMVoFpvMNz+X60p2gyn682icp8QD9XMc0yA8=
 github.com/maldan/go-restserver v1.2.8 h1:K30nLR7al5ZEwPHQNUN8NfhrX3sk/EbhGXTwNfQDDQc=
 github.com/maldan/go-restserver v1.2.8/go.mod h1:KG7J81YT14VXwFII4cGXIxzF5ZJAchgfOPd6Zz7uFBM=
 github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=

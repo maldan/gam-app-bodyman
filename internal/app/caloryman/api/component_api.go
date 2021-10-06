@@ -1,4 +1,4 @@
-package caloryman
+package api
 
 type ComponentApi int
 

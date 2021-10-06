@@ -1,9 +1,10 @@
-package caloryman
+package api
 
 import (
 	"sort"
 	"time"
 
+	"github.com/maldan/gam-app-caloryman/internal/app/caloryman/core"
 	"github.com/maldan/go-cmhp/cmhp_crypto"
 	"github.com/maldan/go-cmhp/cmhp_file"
 	"github.com/maldan/go-cmhp/cmhp_time"
@@ -14,10 +15,10 @@ type TrainingApi struct {
 }
 
 // Get training by id
-func (r TrainingApi) GetIndex(args ArgsId) Training {
+func (r TrainingApi) GetIndex(args ArgsId) core.Training {
 	// Get file with eat
-	var item Training
-	err := cmhp_file.ReadJSON(DataDir+"/training/item/"+args.Id+".json", &item)
+	var item core.Training
+	err := cmhp_file.ReadJSON(core.DataDir+"/training/item/"+args.Id+".json", &item)
 	if err != nil {
 		restserver.Fatal(500, restserver.ErrorType.NotFound, "id", "Training not found!")
 	}
@@ -29,13 +30,13 @@ func (r TrainingApi) GetIndex(args ArgsId) Training {
 }
 
 // Get training by date
-func (r TrainingApi) GetFilterByDate(args ArgsDate) []Training {
+func (r TrainingApi) GetFilterByDate(args ArgsDate) []core.Training {
 	// Get id list
 	idList := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/training/stat/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/training/stat/"+cmhp_time.Format(args.Date, "YYYY-MM-DD")+".json", &idList)
 
 	// Out result
-	out := make([]Training, 0)
+	out := make([]core.Training, 0)
 
 	// Product api
 	r1 := ExerciseApi{}
@@ -43,8 +44,8 @@ func (r TrainingApi) GetFilterByDate(args ArgsDate) []Training {
 	// Search
 	for _, id := range idList {
 		// Get item or skip
-		var item Training
-		err := cmhp_file.ReadJSON(DataDir+"/training/item/"+id+".json", &item)
+		var item core.Training
+		err := cmhp_file.ReadJSON(core.DataDir+"/training/item/"+id+".json", &item)
 		if err != nil {
 			continue
 		}
@@ -127,32 +128,32 @@ func (r TrainingApi) GetYearMap(args ArgsDate) map[string]interface{} {
 }
 
 // Add new training
-func (r TrainingApi) PostIndex(args Training) {
+func (r TrainingApi) PostIndex(args core.Training) {
 	// Save to file
 	args.Id = cmhp_crypto.UID(10)
-	cmhp_file.WriteJSON(DataDir+"/training/item/"+args.Id+".json", &args)
+	cmhp_file.WriteJSON(core.DataDir+"/training/item/"+args.Id+".json", &args)
 
 	// Get list
 	idList := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/training/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/training/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 	idList = append(idList, args.Id)
-	cmhp_file.WriteJSON(DataDir+"/training/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.WriteJSON(core.DataDir+"/training/stat/"+cmhp_time.Format(args.Created, "YYYY-MM-DD")+".json", &idList)
 }
 
 // Update training
-func (r TrainingApi) PatchIndex(args Training) {
-	cmhp_file.WriteJSON(DataDir+"/training/item/"+args.Id+".json", &args)
+func (r TrainingApi) PatchIndex(args core.Training) {
+	cmhp_file.WriteJSON(core.DataDir+"/training/item/"+args.Id+".json", &args)
 }
 
 // Delete training
 func (r TrainingApi) DeleteIndex(args ArgsId) {
 	item := r.GetIndex(args)
-	cmhp_file.Delete(DataDir + "/training/item/" + item.Id + ".json")
+	cmhp_file.Delete(core.DataDir + "/training/item/" + item.Id + ".json")
 
 	// Get list
 	idList := make([]string, 0)
 	idListNew := make([]string, 0)
-	cmhp_file.ReadJSON(DataDir+"/training/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idList)
+	cmhp_file.ReadJSON(core.DataDir+"/training/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idList)
 
 	// Remove id
 	for _, id := range idList {
@@ -163,5 +164,5 @@ func (r TrainingApi) DeleteIndex(args ArgsId) {
 	}
 
 	// Save
-	cmhp_file.WriteJSON(DataDir+"/training/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idListNew)
+	cmhp_file.WriteJSON(core.DataDir+"/training/stat/"+cmhp_time.Format(item.Created, "YYYY-MM-DD")+".json", &idListNew)
 }
