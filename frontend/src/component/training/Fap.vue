@@ -6,7 +6,7 @@
         @click="
           $store.dispatch('modal/show', {
             name: 'prompt',
-            data: { title: 'Add...', value: '' },
+            data: { title: 'Add...', value: '', date: date },
             func: () => {
               $store.dispatch('fap/add');
             },

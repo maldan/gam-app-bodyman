@@ -6,7 +6,7 @@
         @click="
           $store.dispatch('modal/show', {
             name: 'prompt',
-            data: { title: 'New weight...', value: '' },
+            data: { title: 'New weight...', value: '', date: date },
             func: () => {
               $store.dispatch('weight/add');
             },

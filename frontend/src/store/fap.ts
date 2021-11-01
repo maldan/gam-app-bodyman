@@ -26,7 +26,7 @@ export default {
     async add(action: WeightActionContext) {
       await Axios.post(`${action.rootState.main.API_URL}/fap`, {
         amount: action.rootState.modal.data.value * 1,
-        created: Moment().format('YYYY-MM-DD'),
+        created: Moment(action.rootState.modal.data.date).format('YYYY-MM-DD'),
       });
       action.dispatch('getList');
     },
